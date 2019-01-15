@@ -33,7 +33,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import netty.client.NettyClient;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, MapFragment.OnFragmentInteractionListener, RadioFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, MapFragment.OnFragmentInteractionListener, RadioFragment.OnFragmentInteractionListener, AdvancedMapFragment.OnFragmentInteractionListener {
 
     public static LocationManager locationManager;
     private static LocationListener locationListener;
@@ -42,15 +42,9 @@ public class MainActivity extends AppCompatActivity
     private RadioFragment radioFragment;
     private AdvancedMapFragment advancedMapFragment;
 
+    private Fragment currenFragment;
+
     private NettyClient nettyClient;
-
-    private enum FragmentAttached {
-        mapFragment,
-        radioFragment,
-        advancedMapFragment
-    }
-
-    private FragmentAttached mainMenuFragmentAttached;
 
 
     @Override
@@ -178,70 +172,21 @@ public class MainActivity extends AppCompatActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        if (!fragmentManager.getFragments().contains(mapFragment)) {
-            fragmentTransaction.add(R.id.content_main, mapFragment);
-            fragmentTransaction.detach(mapFragment);
-        }
-        if (!fragmentManager.getFragments().contains(advancedMapFragment)) {
-            fragmentTransaction.add(R.id.content_main, advancedMapFragment);
-            fragmentTransaction.detach(advancedMapFragment);
-        }
-        if (!fragmentManager.getFragments().contains(radioFragment)) {
-            fragmentTransaction.add(R.id.content_main, radioFragment);
-            fragmentTransaction.detach(radioFragment);
-        }
+        Fragment fragment = null;
+
+        if (currenFragment != null)
+            fragmentTransaction.detach(currenFragment);
 
 
-        switch (id){
-            case R.id.nav_map:
-                switch (mainMenuFragmentAttached){
-                    case mapFragment:
-                        return false;
-                    case advancedMapFragment:
-                        fragmentTransaction.detach(advancedMapFragment);
-                        break;
-                    case radioFragment:
-                        fragmentTransaction.detach(radioFragment);
-                }
-                fragmentTransaction.attach(mapFragment);
-                mainMenuFragmentAttached = FragmentAttached.mapFragment;
-                break;
-            case R.id.advancedmap:
-                switch (mainMenuFragmentAttached){
-                    case advancedMapFragment:
-                        return false;
-                    case mapFragment:
-                        fragmentTransaction.detach(mapFragment);
-                        break;
-                    case radioFragment:
-                        fragmentTransaction.detach(radioFragment);
-                        break;
-                }
-                mainMenuFragmentAttached = FragmentAttached.advancedMapFragment;
-                fragmentTransaction.attach(advancedMapFragment);
-                break;
-            case R.id.radio:{
-                switch (mainMenuFragmentAttached){
-                    case radioFragment:
-                        return false;
-                    case mapFragment:
-                        fragmentTransaction.detach(mapFragment);
-                        break;
-                    case advancedMapFragment:
-                        fragmentTransaction.detach(advancedMapFragment);
-                        break;
-                }
-                mainMenuFragmentAttached = FragmentAttached.radioFragment;
-                fragmentTransaction.attach(radioFragment);
-                break;
-            }
+        if (id == R.id.nav_map) {
+            fragment = new MapFragment();
+        } else if (id == R.id.nav_advancedmap) {
+            fragment = new AdvancedMapFragment();
+        } else if (id == R.id.nav_radio) {
+            fragment = new RadioFragment();
         }
 
-
-
-
-
-
+        fragmentTransaction.replace(R.id.content_main, fragment);
         fragmentTransaction.commit();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
