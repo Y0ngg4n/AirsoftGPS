@@ -8,6 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -17,7 +21,7 @@ import android.view.ViewGroup;
  * Use the {@link AdvancedMapFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AdvancedMapFragment extends Fragment {
+public class AdvancedMapFragment extends Fragment implements OnMapReadyCallback {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -26,6 +30,9 @@ public class AdvancedMapFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private GoogleMap googleMap;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -64,7 +71,12 @@ public class AdvancedMapFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_advancedmap, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_advancedmap, container, false);
+        //This is for loading the Map
+        SupportMapFragment advancedmapFragment = SupportMapFragment.newInstance();
+        advancedmapFragment.getMapAsync(this::onMapReady);
+        getChildFragmentManager().beginTransaction().replace(R.id.advancedmap, advancedmapFragment).commit();
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -89,6 +101,12 @@ public class AdvancedMapFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        this.googleMap = googleMap;
+        this.googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
     }
 
     /**

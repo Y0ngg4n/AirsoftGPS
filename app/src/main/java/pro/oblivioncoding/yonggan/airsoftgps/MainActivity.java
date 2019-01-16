@@ -2,13 +2,16 @@ package pro.oblivioncoding.yonggan.airsoftgps;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -28,9 +31,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.tasks.OnFailureListener;
 
 import netty.client.NettyClient;
+import netty.client.NetworkHandler;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MapFragment.OnFragmentInteractionListener, RadioFragment.OnFragmentInteractionListener, AdvancedMapFragment.OnFragmentInteractionListener {
@@ -39,10 +45,10 @@ public class MainActivity extends AppCompatActivity
     private static LocationListener locationListener;
 
     private MapFragment mapFragment;
-    private RadioFragment radioFragment;
-    private AdvancedMapFragment advancedMapFragment;
+    private static RadioFragment radioFragment;
+    private static AdvancedMapFragment advancedMapFragment;
 
-    private Fragment currenFragment;
+    private Fragment currentFragment;
 
     private NettyClient nettyClient;
 
@@ -84,26 +90,44 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setCheckedItem(R.id.nav_map);
 
         //Connect to Server
-        nettyClient = new NettyClient("test", "test", "192.168.1.29", 12345);
+        AsyncTask.execute(() -> {
+            nettyClient = new NettyClient("test", "test", "192.168.73.20", 12345);
+        });
 
+        requestLocationPermissions();
+
+        turnGPSOn();
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         //Set Accuracy to best
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
         locationManager.getBestProvider(criteria, true);
 
+        if (mapFragment != null) {
+            Log.i("LocationBla", "Setting own marker");
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            mapFragment.setOwnMarker(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+        }
+
+
+
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
+
+
                 if (mapFragment != null) {
                     Log.i("LocationBla", "Setting own marker");
                     mapFragment.setOwnMarker(location);
                 }
-//                if (nettyClient != null) {
-//                    nettyClient.sendClientPositionOUTPackage(location.getLatitude(), location.getLongitude());
-//                }
+                if (nettyClient != null && NetworkHandler.loggedIN) {
+                    nettyClient.sendClientPositionOUTPackage(location.getLatitude(), location.getLongitude());
+                }
             }
 
             @Override
@@ -122,12 +146,27 @@ public class MainActivity extends AppCompatActivity
             }
         };
 
-        //Create new Object of Fragments
-        this.mapFragment = new MapFragment();
-        this.radioFragment = new RadioFragment();
-        this.advancedMapFragment = new AdvancedMapFragment();
+        requestLocation();
 
-        requestLocationPermissions();
+        //Create new Object of Fragment
+        mapFragment = new MapFragment();
+        advancedMapFragment = new AdvancedMapFragment();
+        radioFragment = new RadioFragment();
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        fragmentTransaction.add(R.id.content_main, mapFragment);
+        fragmentTransaction.add(R.id.content_main, advancedMapFragment);
+        fragmentTransaction.add(R.id.content_main, radioFragment);
+
+        fragmentTransaction.detach(advancedMapFragment);
+        fragmentTransaction.detach(radioFragment);
+        fragmentTransaction.commit();
+
+        currentFragment = mapFragment;
+
+
     }
 
     @Override
@@ -162,7 +201,6 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
 
@@ -172,21 +210,24 @@ public class MainActivity extends AppCompatActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        Fragment fragment = null;
+        if (currentFragment != null) fragmentTransaction.detach(currentFragment);
 
-        if (currenFragment != null)
-            fragmentTransaction.detach(currenFragment);
+        if (mapFragment == null) mapFragment = new MapFragment();
+        if (advancedMapFragment == null) advancedMapFragment = new AdvancedMapFragment();
+        if (radioFragment == null) radioFragment = new RadioFragment();
 
 
         if (id == R.id.nav_map) {
-            fragment = new MapFragment();
+            fragmentTransaction.attach(mapFragment);
+            currentFragment = mapFragment;
         } else if (id == R.id.nav_advancedmap) {
-            fragment = new AdvancedMapFragment();
+            fragmentTransaction.attach(advancedMapFragment);
+            currentFragment = advancedMapFragment;
         } else if (id == R.id.nav_radio) {
-            fragment = new RadioFragment();
+            fragmentTransaction.attach(radioFragment);
+            currentFragment = radioFragment;
         }
 
-        fragmentTransaction.replace(R.id.content_main, fragment);
         fragmentTransaction.commit();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -204,17 +245,12 @@ public class MainActivity extends AppCompatActivity
 
     private void requestLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+
             requestLocationPermissions();
             return;
         }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, locationListener);
+        if (locationManager != null)
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, locationListener);
     }
 
     private void requestLocationPermissions() {
@@ -229,5 +265,20 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void turnGPSOn(){
+        //TODO: Automatically turn GPS on
+    }
+
+    private void turnGPSOff(){
+        String provider = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+
+        if(provider.contains("gps")){ //if gps is enabled
+            final Intent poke = new Intent();
+            poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
+            poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
+            poke.setData(Uri.parse("3"));
+            sendBroadcast(poke);
+        }
+    }
 }
 

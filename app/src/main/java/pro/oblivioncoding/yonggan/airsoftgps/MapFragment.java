@@ -8,15 +8,20 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -44,9 +49,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private OnFragmentInteractionListener mListener;
 
-    private SupportMapFragment mapFragment;
-
     private GoogleMap googleMap;
+
+    private SupportMapFragment mapFragment;
 
     private LocationManager locationManager;
 
@@ -80,23 +85,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
-        // don't recreate fragment everytime ensure last map location/state are maintained
-        if (mapFragment == null) {
-            mapFragment = SupportMapFragment.newInstance();
-            mapFragment.getMapAsync(this);
-        }
-
-        // R.id.map is a FrameLayout, not a Fragment
+        //This is for loading the Map
+        SupportMapFragment mapFragment = SupportMapFragment.newInstance();
+        mapFragment.getMapAsync(this::onMapReady);
         getChildFragmentManager().beginTransaction().replace(R.id.map, mapFragment).commit();
-
-        // Inflate the layout for this fragment
-
         return rootView;
     }
 
@@ -109,7 +108,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-
     }
 
     @Override
@@ -121,8 +119,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        Log.i("MapReady", "Map Loaded");
         this.googleMap = googleMap;
-        // Add a marker in Sydney, Australia, and move the camera.
         this.googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         locationManager = ((MainActivity) getActivity()).getLocationManager();
 
@@ -145,7 +143,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     public void setOwnMarker(Location location){
-        if(googleMap != null) {
+
+        if(googleMap != null && location != null) {
+            Log.i("LocationSet", "Setting your own Location");
             googleMap.clear();
             googleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(location.getLatitude(), location.getLongitude()))

@@ -76,12 +76,15 @@ public class NettyClient {
         }
     }
 
-    public void sendClientPositionOUTPackage(double latitude, double longitude) {
+    public static void sendClientPositionOUTPackage(double latitude, double longitude) {
         if (channel != null) {
             if (channel.isWritable()) {
-                channel.writeAndFlush(new ClientPositionOUT(latitude, longitude, this.username));
+                channel.writeAndFlush(new ClientPositionOUT(latitude, longitude, username));
             }
         }
     }
 
+    public static String getUsername() {
+        return username;
+    }
 }
