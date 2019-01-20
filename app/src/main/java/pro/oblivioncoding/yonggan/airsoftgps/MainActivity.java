@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity
 
         //Connect to Server
         AsyncTask.execute(() -> {
-            nettyClient = new NettyClient("test", "test", "192.168.73.20", 12345);
+            nettyClient = new NettyClient("test", "test", "192.168.1.29", 12345);
         });
 
         requestLocationPermissions();

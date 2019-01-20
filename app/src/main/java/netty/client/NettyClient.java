@@ -50,17 +50,15 @@ public class NettyClient {
 
             final ChannelFuture channelFuture = bootstrap.connect(host, port).syncUninterruptibly();
 
-
             channelFuture.addListener(future -> {
                 if (future.isSuccess()) {
                     channel = channelFuture.channel();
                     channel.writeAndFlush(new AuthPacketOUT(username, password));
-                    Log.i("NettyConnectionSuccess", "Succesfully connected to the Server");
+                    Log.i("NettyConnectionSuccess", "Successfully connected to the Server with the Channel-ID: " + channel.id());
                 } else {
                     group.shutdownGracefully();
                 }
             });
-
 
         } catch (final Exception ex) {
 

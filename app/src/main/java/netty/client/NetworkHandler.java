@@ -1,16 +1,14 @@
 package netty.client;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.pm.PackageManager;
 import android.location.LocationManager;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import netty.packet.PacketIN;
 import netty.packet.in.LoginResponsePacketIN;
+import netty.packet.in.ClientAllPostionsIN;
 import pro.oblivioncoding.yonggan.airsoftgps.MainActivity;
 
 public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
@@ -21,6 +19,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
     @SuppressLint("MissingPermission")
     @Override
     protected void channelRead0(final ChannelHandlerContext channelHandlerContext, final PacketIN packet) {
+        Log.i("PacketIncome", "Packet incoming: " + packet.getId());
         if (packet instanceof LoginResponsePacketIN) {
             final LoginResponsePacketIN responsePacket = ((LoginResponsePacketIN) packet);
             if (responsePacket.isSuccess()) {
@@ -36,12 +35,17 @@ public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
                 Log.i("NettyLoginError", "Login into Database not successfull");
                 loggedIN = false;
             }
+        }else if(packet instanceof ClientAllPostionsIN){
+            Log.i("NettyAllPosition", "All Position incoming");
+            final ClientAllPostionsIN clientAllPostionsIN = ((ClientAllPostionsIN) packet);
+            //TODO: Handle Data and send them
         }
     }
 
     @Override
     public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) {
-        //    controller.logoutScene();
-        //    cause.printStackTrace();
+//            controller.logoutScene();
+        Log.i("NetworkHandlerError", cause.getMessage());
+            cause.printStackTrace();
     }
 }

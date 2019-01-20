@@ -1,10 +1,13 @@
 package netty.packet;
 
+import netty.packet.in.ClientAllPostionsIN;
 import netty.packet.in.LoginResponsePacketIN;
 
 public enum PacketRegistry {
 
-    LoginResponseIN(LoginResponsePacketIN.class);
+    LoginResponseIN(LoginResponsePacketIN.class),
+    ClientAllPostionsIN(ClientAllPostionsIN.class);
+
     private Class<? extends PacketIN> clazz;
 
     PacketRegistry(Class<? extends PacketIN> clazz) {
