@@ -1,12 +1,12 @@
 package netty.packet;
+import android.util.Log;
 
-import netty.packet.in.ClientAllPostionsIN;
+import netty.packet.in.ClientAllPositionsIN;
 import netty.packet.in.LoginResponsePacketIN;
 
 public enum PacketRegistry {
-
-    LoginResponseIN(LoginResponsePacketIN.class),
-    ClientAllPostionsIN(ClientAllPostionsIN.class);
+    LoginResponsePacketIN(LoginResponsePacketIN.class),
+    ClientAllPositionsIN(ClientAllPositionsIN.class);
 
     private Class<? extends PacketIN> clazz;
 
@@ -14,18 +14,20 @@ public enum PacketRegistry {
         this.clazz = clazz;
     }
 
-    public static Class<? extends PacketIN> getPacket(final int id) {
-        for (final PacketRegistry value : values()) {
+    public static Class<? extends PacketIN> getPacket(int id) {
+        for (PacketRegistry value : values()) {
             try {
                 if (value.getClazz().newInstance().getId() == id) {
                     return value.getClazz();
                 }
             } catch (Exception e) {
+                Log.i("PacketRegistry", e.getMessage());
                 e.printStackTrace();
             }
         }
         return null;
     }
+
 
     public Class<? extends PacketIN> getClazz() {
         return clazz;

@@ -19,7 +19,6 @@ public class LoginResponsePacketIN implements PacketIN {
 
     @Override
     public int getId() {
-        //TODO ID`s musst du selber planen
         return 1;
     }
 }

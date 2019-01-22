@@ -5,11 +5,17 @@ import com.google.gson.JsonObject;
 
 import netty.packet.PacketIN;
 
-public class ClientAllPostionsIN implements PacketIN {
+public class ClientAllPositionsIN implements PacketIN {
 
     private JsonArray jsonArray;
 
-    public ClientAllPostionsIN(JsonArray jsonArray){
+    public JsonArray getJsonArray() {
+        return jsonArray;
+    }
+
+    public ClientAllPositionsIN(){}
+
+    public ClientAllPositionsIN(final JsonArray jsonArray){
         this.jsonArray = jsonArray;
     }
 

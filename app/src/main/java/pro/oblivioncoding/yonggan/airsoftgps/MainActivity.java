@@ -74,13 +74,8 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show());
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -94,7 +89,7 @@ public class MainActivity extends AppCompatActivity
 
         //Connect to Server
         AsyncTask.execute(() -> {
-            nettyClient = new NettyClient("test", "test", "192.168.1.29", 12345);
+            nettyClient = new NettyClient("test", "test", "192.168.56.1", 12345);
         });
 
         requestLocationPermissions();
@@ -113,7 +108,6 @@ public class MainActivity extends AppCompatActivity
             }
             mapFragment.setOwnMarker(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
         }
-
 
 
         locationListener = new LocationListener() {

@@ -8,7 +8,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import netty.packet.PacketIN;
 import netty.packet.in.LoginResponsePacketIN;
-import netty.packet.in.ClientAllPostionsIN;
+import netty.packet.in.ClientAllPositionsIN;
 import pro.oblivioncoding.yonggan.airsoftgps.MainActivity;
 
 public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
@@ -35,9 +35,9 @@ public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
                 Log.i("NettyLoginError", "Login into Database not successfull");
                 loggedIN = false;
             }
-        }else if(packet instanceof ClientAllPostionsIN){
+        }else if(packet instanceof ClientAllPositionsIN){
             Log.i("NettyAllPosition", "All Position incoming");
-            final ClientAllPostionsIN clientAllPostionsIN = ((ClientAllPostionsIN) packet);
+            final ClientAllPositionsIN clientAllPositionsIN = ((ClientAllPositionsIN) packet);
             //TODO: Handle Data and send them
         }
     }
