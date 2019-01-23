@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity
     public static LocationManager locationManager;
     private static LocationListener locationListener;
 
-    private MapFragment mapFragment;
+    public static MapFragment mapFragment;
     private static RadioFragment radioFragment;
     private static AdvancedMapFragment advancedMapFragment;
 

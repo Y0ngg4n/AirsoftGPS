@@ -4,12 +4,18 @@ import android.annotation.SuppressLint;
 import android.location.LocationManager;
 import android.util.Log;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import java.sql.Timestamp;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import netty.packet.PacketIN;
 import netty.packet.in.LoginResponsePacketIN;
 import netty.packet.in.ClientAllPositionsIN;
 import pro.oblivioncoding.yonggan.airsoftgps.MainActivity;
+import pro.oblivioncoding.yonggan.airsoftgps.MapFragment;
 
 public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
 
@@ -39,12 +45,20 @@ public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
             Log.i("NettyAllPosition", "All Position incoming");
             final ClientAllPositionsIN clientAllPositionsIN = ((ClientAllPositionsIN) packet);
             //TODO: Handle Data and send them
+            Log.i("NettyAllPosition", String.valueOf(clientAllPositionsIN.getJsonArray()));
+            for(JsonElement jsonElement : clientAllPositionsIN.getJsonArray()){
+                MainActivity.mapFragment.setUserMarker(
+                        jsonElement.getAsJsonObject().get("latitude").getAsDouble(),
+                        jsonElement.getAsJsonObject().get("longitude").getAsDouble(),
+                        jsonElement.getAsJsonObject().get("userID").getAsInt(),
+                        jsonElement.getAsJsonObject().get("username").getAsString(),
+                        Timestamp.valueOf(jsonElement.getAsJsonObject().get("timestamp").getAsString()));
+            }
         }
     }
 
     @Override
     public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) {
-//            controller.logoutScene();
         Log.i("NetworkHandlerError", cause.getMessage());
             cause.printStackTrace();
     }

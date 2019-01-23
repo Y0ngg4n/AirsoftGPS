@@ -24,9 +24,15 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 
 /**
@@ -54,6 +60,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private SupportMapFragment mapFragment;
 
     private LocationManager locationManager;
+
+    private static boolean firstTimeCamera;
+
+    private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+
 
     public MapFragment() {
         // Required empty public constructor
@@ -142,9 +153,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         void onFragmentInteraction(Uri uri);
     }
 
-    public void setOwnMarker(Location location){
+    public void setOwnMarker(Location location) {
 
-        if(googleMap != null && location != null) {
+        if (googleMap != null && location != null) {
+            Log.i("LocationSet", "Setting your own Location");
+            googleMap.clear();
+            googleMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                    .title("You are here!")
+            );
+            if (firstTimeCamera)
+                firstTimeCamera = !firstTimeCamera;
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15f));
+        }
+    }
+
+    public void setOwnMarkerWithoutCamera(Location location) {
+
+        if (googleMap != null && location != null) {
             Log.i("LocationSet", "Setting your own Location");
             googleMap.clear();
             googleMap.addMarker(new MarkerOptions()
@@ -154,5 +180,28 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15f));
         }
     }
+
+    public void resetCamera(LatLng latLng){
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f));
+    }
+
+
+    public void setUserMarker(double latitude, double longitude, int userID, String username, Timestamp timestamp) {
+        if (googleMap != null) { //TODO: && username != NettyServer.username
+            Log.i("LocationSet", "Setting client the Position of " + username);
+            googleMap.clear();
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                setOwnMarker(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+            }
+
+            googleMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(latitude, longitude))
+                    .title(username + " (" + userID +") \n" + simpleDateFormat.format(new Date(timestamp.getTime())))
+                    .icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
+            );
+        }
+    }
+
 
 }

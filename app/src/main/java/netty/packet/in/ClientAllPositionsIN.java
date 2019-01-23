@@ -13,15 +13,9 @@ public class ClientAllPositionsIN implements PacketIN {
         return jsonArray;
     }
 
-    public ClientAllPositionsIN(){}
-
-    public ClientAllPositionsIN(final JsonArray jsonArray){
-        this.jsonArray = jsonArray;
-    }
-
     @Override
     public void read(JsonObject jsonObject) {
-        jsonObject.get("array").getAsJsonArray();
+        this.jsonArray = jsonObject.get("positions").getAsJsonArray();
     }
 
     @Override
