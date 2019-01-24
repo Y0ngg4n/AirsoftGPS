@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.location.LocationManager;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -32,8 +34,8 @@ public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
                 Log.i("NettyLoginSuccessfull", "Login into Database successfull");
                 loggedIN = true;
                 try {
-                NettyClient.sendClientPositionOUTPackage(MainActivity.getLocationManager().getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude(), MainActivity.getLocationManager().getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude());
-                }catch (Exception e){
+                    NettyClient.sendClientPositionOUTPackage(MainActivity.getLocationManager().getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude(), MainActivity.getLocationManager().getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude());
+                } catch (Exception e) {
                     Log.i("NettyPositionError", "Couldn´t send first Position to the Server due to missing Location Permissions.");
                 }
 
@@ -41,18 +43,19 @@ public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
                 Log.i("NettyLoginError", "Login into Database not successfull");
                 loggedIN = false;
             }
-        }else if(packet instanceof ClientAllPositionsIN){
+        } else if (packet instanceof ClientAllPositionsIN) {
             Log.i("NettyAllPosition", "All Position incoming");
             final ClientAllPositionsIN clientAllPositionsIN = ((ClientAllPositionsIN) packet);
             //TODO: Handle Data and send them
             Log.i("NettyAllPosition", String.valueOf(clientAllPositionsIN.getJsonArray()));
-            for(JsonElement jsonElement : clientAllPositionsIN.getJsonArray()){
-                MainActivity.mapFragment.setUserMarker(
+            for (JsonElement jsonElement : clientAllPositionsIN.getJsonArray()) {
+                MainActivity.getMapFragment().createMarker(
                         jsonElement.getAsJsonObject().get("latitude").getAsDouble(),
                         jsonElement.getAsJsonObject().get("longitude").getAsDouble(),
                         jsonElement.getAsJsonObject().get("userID").getAsInt(),
                         jsonElement.getAsJsonObject().get("username").getAsString(),
                         Timestamp.valueOf(jsonElement.getAsJsonObject().get("timestamp").getAsString()));
+
             }
         }
     }
@@ -60,6 +63,6 @@ public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
     @Override
     public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) {
         Log.i("NetworkHandlerError", cause.getMessage());
-            cause.printStackTrace();
+        cause.printStackTrace();
     }
 }

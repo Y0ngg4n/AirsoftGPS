@@ -7,9 +7,11 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -27,12 +29,17 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import netty.client.NettyClient;
 
 
 /**
@@ -55,7 +62,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private OnFragmentInteractionListener mListener;
 
-    private GoogleMap googleMap;
+    private GoogleMap googleMap = null;
 
     private SupportMapFragment mapFragment;
 
@@ -65,6 +72,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
 
+    private static Marker ownMarker;
+
+    public static HashMap<Integer, Marker> userMarker = new HashMap<Integer, Marker>();
 
     public MapFragment() {
         // Required empty public constructor
@@ -157,51 +167,48 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         if (googleMap != null && location != null) {
             Log.i("LocationSet", "Setting your own Location");
-            googleMap.clear();
             googleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(location.getLatitude(), location.getLongitude()))
                     .title("You are here!")
             );
-            if (firstTimeCamera)
+            if (!firstTimeCamera) {
                 firstTimeCamera = !firstTimeCamera;
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15f));
-        }
-    }
-
-    public void setOwnMarkerWithoutCamera(Location location) {
-
-        if (googleMap != null && location != null) {
-            Log.i("LocationSet", "Setting your own Location");
-            googleMap.clear();
-            googleMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(location.getLatitude(), location.getLongitude()))
-                    .title("You are here!")
-            );
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15f));
-        }
-    }
-
-    public void resetCamera(LatLng latLng){
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f));
-    }
-
-
-    public void setUserMarker(double latitude, double longitude, int userID, String username, Timestamp timestamp) {
-        if (googleMap != null) { //TODO: && username != NettyServer.username
-            Log.i("LocationSet", "Setting client the Position of " + username);
-            googleMap.clear();
-            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                setOwnMarker(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+                setCamera(new LatLng(location.getLatitude(), location.getLongitude()));
             }
-
-            googleMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(latitude, longitude))
-                    .title(username + " (" + userID +") \n" + simpleDateFormat.format(new Date(timestamp.getTime())))
-                    .icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
-            );
         }
     }
 
+    public void clearMap() {
+        if (googleMap != null) {
+            googleMap.clear();
+        }
+    }
 
+    public void setCamera(LatLng latLng) {
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 5f));
+    }
+
+    public void createMarker(double latitude, double longitude, int userID, String username, Timestamp timestamp) {
+        if (googleMap != null) {
+            getActivity().runOnUiThread(() -> {
+                if(NettyClient.getUsername().equals(username)){
+                Marker marker = googleMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(latitude, longitude))
+                        .title(username + " (" + userID + ") \n" + simpleDateFormat.format(new Date(timestamp.getTime())))
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                userMarker.put(userID, marker);
+                Log.i("Marker", "Own Server-Marker created at " + marker.getPosition());
+                }else {
+                    Marker marker = googleMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(latitude, longitude))
+                            .title(username + " (" + userID + ") \n" + simpleDateFormat.format(new Date(timestamp.getTime())))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                    userMarker.put(userID, marker);
+                    Log.i("Marker", "Marker created at " + marker.getPosition());
+                }
+            });
+        } else {
+            Log.i("Marker", "GoogleMap is null");
+        }
+    }
 }

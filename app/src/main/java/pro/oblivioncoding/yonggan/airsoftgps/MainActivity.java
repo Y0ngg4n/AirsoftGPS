@@ -52,6 +52,9 @@ public class MainActivity extends AppCompatActivity
 
     private NettyClient nettyClient;
 
+    public static MapFragment getMapFragment() {
+        return mapFragment;
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -113,10 +116,9 @@ public class MainActivity extends AppCompatActivity
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-
+                Log.i("LocationBla", "LocationChanged to " + location);
 
                 if (mapFragment != null) {
-                    Log.i("LocationBla", "Setting own marker");
                     mapFragment.setOwnMarker(location);
                 }
                 if (nettyClient != null && NetworkHandler.loggedIN) {
