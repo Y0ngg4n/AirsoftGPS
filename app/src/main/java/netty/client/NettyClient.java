@@ -21,6 +21,7 @@ import netty.packet.PacketDecoder;
 import netty.packet.PacketEncoder;
 import netty.packet.out.AuthPacketOUT;
 import netty.packet.out.ClientPositionOUT;
+import pro.oblivioncoding.yonggan.airsoftgps.LoginActivity;
 
 public class NettyClient {
 
@@ -66,7 +67,8 @@ public class NettyClient {
 
             //noinspection ConstantConditions
             if (ex instanceof ConnectException) {
-                Log.i("NettyConnectionError", "Fehler beim Verbinden");
+                Log.i("NettyConnectionError", "Can´t connect to the Server");
+                LoginActivity.loginConsumer.accept(false);
             } else {
                 //TODO Implement Log Files
                 ex.printStackTrace();

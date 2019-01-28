@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity
 
     private Fragment currentFragment;
 
-    private NettyClient nettyClient;
+    public static NettyClient nettyClient;
 
     public static MapFragment getMapFragment() {
         return mapFragment;
@@ -90,10 +90,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_map);
 
-        //Connect to Server
-        AsyncTask.execute(() -> {
-            nettyClient = new NettyClient("test", "test", "192.168.56.1", 12345);
-        });
+
 
         requestLocationPermissions();
 
@@ -104,14 +101,13 @@ public class MainActivity extends AppCompatActivity
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
         locationManager.getBestProvider(criteria, true);
 
-        if (mapFragment != null) {
+        if (mapFragment != null && locationManager != null) {
             Log.i("LocationBla", "Setting own marker");
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
             mapFragment.setOwnMarker(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
         }
-
 
         locationListener = new LocationListener() {
             @Override
@@ -121,6 +117,7 @@ public class MainActivity extends AppCompatActivity
                 if (mapFragment != null) {
                     mapFragment.setOwnMarker(location);
                 }
+
                 if (nettyClient != null && NetworkHandler.loggedIN) {
                     nettyClient.sendClientPositionOUTPackage(location.getLatitude(), location.getLongitude());
                 }

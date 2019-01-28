@@ -166,10 +166,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void setOwnMarker(Location location) {
 
         if (googleMap != null && location != null) {
+
+            if (ownMarker != null) ownMarker.remove();
             Log.i("LocationSet", "Setting your own Location");
-            googleMap.addMarker(new MarkerOptions()
+            googleMap.setInfoWindowAdapter(new CustomOwnMarkerInfoWindowAdapter(getContext(), "Your Position", location.getLatitude(), location.getLongitude()));
+            ownMarker = googleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(location.getLatitude(), location.getLongitude()))
-                    .title("You are here!")
             );
             if (!firstTimeCamera) {
                 firstTimeCamera = !firstTimeCamera;
@@ -188,20 +190,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 5f));
     }
 
-    public void createMarker(double latitude, double longitude, int userID, String username, Timestamp timestamp) {
+    public void createMarker(double latitude, double longitude, int userID, String username, Timestamp timestamp,  String teamname, boolean alive, int status) {
         if (googleMap != null) {
             getActivity().runOnUiThread(() -> {
-                if(NettyClient.getUsername().equals(username)){
-                Marker marker = googleMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(latitude, longitude))
-                        .title(username + " (" + userID + ") \n" + simpleDateFormat.format(new Date(timestamp.getTime())))
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-                userMarker.put(userID, marker);
-                Log.i("Marker", "Own Server-Marker created at " + marker.getPosition());
-                }else {
+                googleMap.setInfoWindowAdapter(new CustomMarkerInfoWindowAdaper(getContext(), username + " (" + userID + ")", latitude, longitude, simpleDateFormat.format(new Date(timestamp.getTime())), teamname, alive, status));
+                if (NettyClient.getUsername().equals(username)) {
                     Marker marker = googleMap.addMarker(new MarkerOptions()
                             .position(new LatLng(latitude, longitude))
-                            .title(username + " (" + userID + ") \n" + simpleDateFormat.format(new Date(timestamp.getTime())))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                    userMarker.put(userID, marker);
+                    Log.i("Marker", "Own Server-Marker created at " + marker.getPosition());
+                } else {
+                    Marker marker = googleMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(latitude, longitude))
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
                     userMarker.put(userID, marker);
                     Log.i("Marker", "Marker created at " + marker.getPosition());

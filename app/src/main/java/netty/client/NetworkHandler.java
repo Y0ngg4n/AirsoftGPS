@@ -16,6 +16,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import netty.packet.PacketIN;
 import netty.packet.in.LoginResponsePacketIN;
 import netty.packet.in.ClientAllPositionsIN;
+import pro.oblivioncoding.yonggan.airsoftgps.LoginActivity;
 import pro.oblivioncoding.yonggan.airsoftgps.MainActivity;
 import pro.oblivioncoding.yonggan.airsoftgps.MapFragment;
 
@@ -42,19 +43,26 @@ public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
             } else {
                 Log.i("NettyLoginError", "Login into Database not successfull");
                 loggedIN = false;
+
             }
+            LoginActivity.loginConsumer.accept(loggedIN);
         } else if (packet instanceof ClientAllPositionsIN) {
             Log.i("NettyAllPosition", "All Position incoming");
             final ClientAllPositionsIN clientAllPositionsIN = ((ClientAllPositionsIN) packet);
             //TODO: Handle Data and send them
             Log.i("NettyAllPosition", String.valueOf(clientAllPositionsIN.getJsonArray()));
+
             for (JsonElement jsonElement : clientAllPositionsIN.getJsonArray()) {
                 MainActivity.getMapFragment().createMarker(
                         jsonElement.getAsJsonObject().get("latitude").getAsDouble(),
                         jsonElement.getAsJsonObject().get("longitude").getAsDouble(),
                         jsonElement.getAsJsonObject().get("userID").getAsInt(),
                         jsonElement.getAsJsonObject().get("username").getAsString(),
-                        Timestamp.valueOf(jsonElement.getAsJsonObject().get("timestamp").getAsString()));
+                        Timestamp.valueOf(jsonElement.getAsJsonObject().get("timestamp").getAsString()),
+                        jsonElement.getAsJsonObject().get("teamname").getAsString(),
+                        jsonElement.getAsJsonObject().get("alive").getAsBoolean(),
+                        jsonElement.getAsJsonObject().get("status").getAsInt()
+                        );
 
             }
         }
