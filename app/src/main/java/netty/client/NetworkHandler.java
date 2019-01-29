@@ -53,17 +53,22 @@ public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
             Log.i("NettyAllPosition", String.valueOf(clientAllPositionsIN.getJsonArray()));
 
             for (JsonElement jsonElement : clientAllPositionsIN.getJsonArray()) {
+                if (jsonElement.getAsJsonObject().get("username").getAsString().equals(NettyClient.getUsername())) {
+                    Log.i("NettyAllPosition","Same username");
+                    MainActivity.setStatus(jsonElement.getAsJsonObject().get("alive").getAsBoolean(), jsonElement.getAsJsonObject().get("underfire").getAsBoolean(), jsonElement.getAsJsonObject().get("mission").getAsBoolean(),jsonElement.getAsJsonObject().get("support").getAsBoolean());
+                }
                 MainActivity.getMapFragment().createMarker(
                         jsonElement.getAsJsonObject().get("latitude").getAsDouble(),
                         jsonElement.getAsJsonObject().get("longitude").getAsDouble(),
                         jsonElement.getAsJsonObject().get("userID").getAsInt(),
                         jsonElement.getAsJsonObject().get("username").getAsString(),
                         Timestamp.valueOf(jsonElement.getAsJsonObject().get("timestamp").getAsString()),
-                        jsonElement.getAsJsonObject().get("teamname").getAsString(),
+                        jsonElement.getAsJsonObject().get("teamname").getAsString() + " (" + jsonElement.getAsJsonObject().get("teamid").getAsString() + ")",
                         jsonElement.getAsJsonObject().get("alive").getAsBoolean(),
-                        jsonElement.getAsJsonObject().get("status").getAsInt()
-                        );
-
+                        jsonElement.getAsJsonObject().get("underfire").getAsBoolean(),
+                        jsonElement.getAsJsonObject().get("mission").getAsBoolean(),
+                        jsonElement.getAsJsonObject().get("support").getAsBoolean()
+                );
             }
         }
     }

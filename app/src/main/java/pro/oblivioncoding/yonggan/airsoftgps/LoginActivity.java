@@ -32,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             };
 
-            AsyncTask.execute(() -> MainActivity.nettyClient = new NettyClient(((TextView) findViewById(R.id.username)).getText().toString(), ((TextView) findViewById(R.id.password)).getText().toString(), "oblivioncoding.pro", 12345));
+            AsyncTask.execute(() -> MainActivity.nettyClient = new NettyClient(((TextView) findViewById(R.id.username)).getText().toString(), ((TextView) findViewById(R.id.password)).getText().toString(), "192.168.56.1", 12345));
             instance.runOnUiThread(() -> ((TextView) findViewById(R.id.errorLogin)).setText("Trying to connect..."));
         });
     }

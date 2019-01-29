@@ -72,7 +72,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
 
-    private static Marker ownMarker;
+    public static Marker ownMarker;
 
     public static HashMap<Integer, Marker> userMarker = new HashMap<Integer, Marker>();
 
@@ -190,10 +190,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 5f));
     }
 
-    public void createMarker(double latitude, double longitude, int userID, String username, Timestamp timestamp,  String teamname, boolean alive, int status) {
+    public void createMarker(double latitude, double longitude, int userID, String username, Timestamp timestamp,  String teamname, boolean alive, boolean underfire, boolean mission, boolean support) {
         if (googleMap != null) {
             getActivity().runOnUiThread(() -> {
-                googleMap.setInfoWindowAdapter(new CustomMarkerInfoWindowAdaper(getContext(), username + " (" + userID + ")", latitude, longitude, simpleDateFormat.format(new Date(timestamp.getTime())), teamname, alive, status));
+                googleMap.setInfoWindowAdapter(new CustomMarkerInfoWindowAdaper(getContext(), username + " (" + userID + ")", latitude, longitude, simpleDateFormat.format(new Date(timestamp.getTime())), teamname, alive, underfire, mission, support));
                 if (NettyClient.getUsername().equals(username)) {
                     Marker marker = googleMap.addMarker(new MarkerOptions()
                             .position(new LatLng(latitude, longitude))

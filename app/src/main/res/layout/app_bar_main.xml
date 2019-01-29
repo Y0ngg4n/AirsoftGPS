@@ -20,14 +20,55 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_main" />
+    <include
+        android:id="@+id/include"
+        layout="@layout/content_main" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/currentlocationfb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        android:layout_marginTop="76dp"
+        android:layout_marginRight="16dp"
+        android:layout_gravity="top|end"
+        app:srcCompat="@drawable/ic_current_location" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_anchor="@+id/include"
+        app:layout_anchorGravity="right|bottom">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/missionfb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            app:srcCompat="@drawable/ic_fb_mission" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/supportfb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            app:srcCompat="@drawable/ic_fb_support" />
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/underfirefb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            app:srcCompat="@drawable/ic_under_fire" />
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/hitfb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            app:srcCompat="@drawable/ic_fb_hit" />
+    </LinearLayout>
+
 
 </android.support.design.widget.CoordinatorLayout>

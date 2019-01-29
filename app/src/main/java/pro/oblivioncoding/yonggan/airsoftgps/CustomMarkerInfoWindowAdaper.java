@@ -17,13 +17,10 @@ public class CustomMarkerInfoWindowAdaper implements GoogleMap.InfoWindowAdapter
 
     private double latitude;
     private double longitude;
-    private String title;
-    private String timestamp;
-    private String teamname;
-    private boolean alive;
-    private int status;
+    private String title, timestamp,teamname;
+    private boolean alive, underfire, mission, support;
 
-    public CustomMarkerInfoWindowAdaper(Context context, String title, double latitude, double longitude, String timestamp, String teamname, boolean alive, int status) {
+    public CustomMarkerInfoWindowAdaper(Context context, String title, double latitude, double longitude, String timestamp, String teamname, boolean alive, boolean underfire, boolean mission, boolean support) {
         mContext = context;
         mWindow = LayoutInflater.from(context).inflate(R.layout.custom_marker_info_window, null);
         this.latitude = latitude;
@@ -32,7 +29,9 @@ public class CustomMarkerInfoWindowAdaper implements GoogleMap.InfoWindowAdapter
         this.title = title;
         this.teamname = teamname;
         this.alive = alive;
-        this.status = status;
+        this.underfire = underfire;
+        this.mission = mission;
+        this.support = support;
     }
 
     private void renderWindowText(Marker marker, View view) {
@@ -42,7 +41,9 @@ public class CustomMarkerInfoWindowAdaper implements GoogleMap.InfoWindowAdapter
         ((TextView) view.findViewById(R.id.timestamp)).setText("Time: " + timestamp);
         ((TextView) view.findViewById(R.id.teamname)).setText("Team: " + teamname);
         ((TextView) view.findViewById(R.id.alive)).setText("Alive: " + alive);
-        ((TextView) view.findViewById(R.id.status)).setText("Status: " + status);
+        ((TextView) view.findViewById(R.id.underfire)).setText("Under Fire: " + underfire);
+        ((TextView) view.findViewById(R.id.mission)).setText("Mission: " + underfire);
+        ((TextView) view.findViewById(R.id.support)).setText("Support: " + underfire);
     }
 
     @Override

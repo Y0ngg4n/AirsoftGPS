@@ -33,6 +33,7 @@ import android.view.MenuItem;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 
 import netty.client.NettyClient;
@@ -56,6 +57,28 @@ public class MainActivity extends AppCompatActivity
         return mapFragment;
     }
 
+    public static boolean alive, mission, underFire, support;
+
+    //Floating Buttons
+    private static FloatingActionButton hitFloatingButton;
+    private static FloatingActionButton supportFloatingButton;
+    private static FloatingActionButton underfireFloatingButton;
+    private static FloatingActionButton missionFloatingButton;
+
+    public static void setStatus(boolean palive, boolean pmission,boolean punderFire, boolean psupport){
+        alive = palive;
+        mission = pmission;
+        underFire = punderFire;
+        support = psupport;
+        Log.i("Blablup", "alive" + alive + "fire " + underFire);
+        setAliveIcon();
+        setUnderFireIcon();
+        setMissionIcon();
+        setSupportIcon();
+    }
+
+
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -76,9 +99,38 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
+        //############ Floating Buttons ####################
+        hitFloatingButton = (FloatingActionButton) findViewById(R.id.hitfb);
+        supportFloatingButton = (FloatingActionButton) findViewById(R.id.supportfb);
+        underfireFloatingButton = (FloatingActionButton) findViewById(R.id.underfirefb);
+        missionFloatingButton = (FloatingActionButton) findViewById(R.id.missionfb);
+        hitFloatingButton.setOnClickListener(view -> {
+            alive = !alive;
+            nettyClient.sendClientStatusPositionOUTPackage(NettyClient.getUsername(), alive, underFire, mission, support);
+            setAliveIcon();
+        });
+
+        supportFloatingButton.setOnClickListener(view -> {
+            support = !support;
+            nettyClient.sendClientStatusPositionOUTPackage(NettyClient.getUsername(), alive, underFire, mission, support);
+            setSupportIcon();
+        });
+
+        underfireFloatingButton.setOnClickListener(view -> {
+            underFire = !underFire;
+            nettyClient.sendClientStatusPositionOUTPackage(NettyClient.getUsername(), alive, underFire, mission, support);
+           setUnderFireIcon();
+        });
+
+        missionFloatingButton.setOnClickListener(view -> {
+            mission = !mission;
+            nettyClient.sendClientStatusPositionOUTPackage(NettyClient.getUsername(), alive, underFire, mission, support);
+           setMissionIcon();
+        });
+
+        final FloatingActionButton currentlocationFloatingButton = (FloatingActionButton) findViewById(R.id.currentlocationfb);
+        currentlocationFloatingButton.setOnClickListener(view -> mapFragment.setCamera(mapFragment.ownMarker.getPosition()));
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -91,11 +143,14 @@ public class MainActivity extends AppCompatActivity
         navigationView.setCheckedItem(R.id.nav_map);
 
 
-
         requestLocationPermissions();
 
         turnGPSOn();
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        locationManager = (LocationManager) this.
+
+                getSystemService(Context.LOCATION_SERVICE);
+
         //Set Accuracy to best
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
@@ -109,42 +164,53 @@ public class MainActivity extends AppCompatActivity
             mapFragment.setOwnMarker(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
         }
 
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                Log.i("LocationBla", "LocationChanged to " + location);
+        locationListener = new
 
-                if (mapFragment != null) {
-                    mapFragment.setOwnMarker(location);
+                LocationListener() {
+                    @Override
+                    public void onLocationChanged(Location location) {
+                        Log.i("LocationBla", "LocationChanged to " + location);
+
+                        if (mapFragment != null) {
+                            mapFragment.setOwnMarker(location);
+                        }
+
+                        if (nettyClient != null && NetworkHandler.loggedIN) {
+                            nettyClient.sendClientPositionOUTPackage(location.getLatitude(), location.getLongitude());
+                        }
+                    }
+
+                    @Override
+                    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                    }
+
+                    @Override
+                    public void onProviderEnabled(String provider) {
+
+                    }
+
+                    @Override
+                    public void onProviderDisabled(String provider) {
+
+                    }
                 }
-
-                if (nettyClient != null && NetworkHandler.loggedIN) {
-                    nettyClient.sendClientPositionOUTPackage(location.getLatitude(), location.getLongitude());
-                }
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-
-            }
-        };
+        ;
 
         requestLocation();
 
         //Create new Object of Fragment
-        mapFragment = new MapFragment();
-        advancedMapFragment = new AdvancedMapFragment();
-        radioFragment = new RadioFragment();
+        mapFragment = new
+
+                MapFragment();
+
+        advancedMapFragment = new
+
+                AdvancedMapFragment();
+
+        radioFragment = new
+
+                RadioFragment();
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -158,7 +224,6 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction.commit();
 
         currentFragment = mapFragment;
-
 
     }
 
@@ -258,14 +323,41 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void turnGPSOn(){
+    //Setting floating Button icons
+    public static void setAliveIcon(){
+        if (alive)
+            hitFloatingButton.setImageResource(R.drawable.ic_fb_hit);
+        else
+            hitFloatingButton.setImageResource(R.drawable.ic_fb_healed);
+    }
+    public static void setUnderFireIcon(){
+        if (underFire)
+            underfireFloatingButton.setImageResource(R.drawable.ic_not_underfire);
+        else
+            underfireFloatingButton.setImageResource(R.drawable.ic_under_fire);
+    }
+    public static void setMissionIcon(){
+        if (mission)
+            missionFloatingButton.setImageResource(R.drawable.ic_mission_success);
+        else
+            missionFloatingButton.setImageResource(R.drawable.ic_fb_mission);
+    }
+
+    public static void setSupportIcon(){
+        if (support)
+            supportFloatingButton.setImageResource(R.drawable.ic_no_support);
+        else
+            supportFloatingButton.setImageResource(R.drawable.ic_fb_support);
+    }
+
+    private void turnGPSOn() {
         //TODO: Automatically turn GPS on
     }
 
-    private void turnGPSOff(){
+    private void turnGPSOff() {
         String provider = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
 
-        if(provider.contains("gps")){ //if gps is enabled
+        if (provider.contains("gps")) { //if gps is enabled
             final Intent poke = new Intent();
             poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
             poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
