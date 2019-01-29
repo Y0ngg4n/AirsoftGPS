@@ -28,9 +28,10 @@
                         </option>
                         <option name="values">
                           <map>
+                            <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="ffffff" />
-                            <entry key="outputName" value="ic_fb_healed" />
-                            <entry key="sourceFile" value="C:\Users\aschuele" />
+                            <entry key="outputName" value="ic_pin_notaliveunderfiresupport" />
+                            <entry key="sourceFile" value="C:\Users\Yonggan\Desktop\VectorPins\Vector\notaliveunderfiresupport.svg" />
                           </map>
                         </option>
                       </PersistentState>
