@@ -55,7 +55,6 @@ public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
             for (JsonElement jsonElement : clientAllPositionsIN.getJsonArray()) {
                 if (jsonElement.getAsJsonObject().get("username").getAsString().equals(NettyClient.getUsername())) {
                     Log.i("NettyAllPosition","Same username");
-                    MainActivity.setStatus(jsonElement.getAsJsonObject().get("alive").getAsBoolean(), jsonElement.getAsJsonObject().get("underfire").getAsBoolean(), jsonElement.getAsJsonObject().get("mission").getAsBoolean(),jsonElement.getAsJsonObject().get("support").getAsBoolean());
                 }
                 MainActivity.getMapFragment().createMarker(
                         jsonElement.getAsJsonObject().get("latitude").getAsDouble(),

@@ -23,6 +23,7 @@ import netty.packet.out.AuthPacketOUT;
 import netty.packet.out.ClientPositionOUT;
 import netty.packet.out.ClientStatusUpdateOUT;
 import pro.oblivioncoding.yonggan.airsoftgps.LoginActivity;
+import pro.oblivioncoding.yonggan.airsoftgps.MainActivity;
 
 public class NettyClient {
 
@@ -57,6 +58,7 @@ public class NettyClient {
                     channel = channelFuture.channel();
                     channel.writeAndFlush(new AuthPacketOUT(username, password));
                     Log.i("NettyConnectionSuccess", "Successfully connected to the Server with the Channel-ID: " + channel.id());
+                    sendClientStatusPositionOUTPackage(MainActivity.alive, MainActivity.underFire, MainActivity.mission, MainActivity.support);
                 } else {
                     group.shutdownGracefully();
                 }
@@ -85,7 +87,7 @@ public class NettyClient {
         }
     }
 
-    public static void sendClientStatusPositionOUTPackage(String username, boolean alive, boolean underfire, boolean mission, boolean support){
+    public static void sendClientStatusPositionOUTPackage(boolean alive, boolean underfire, boolean mission, boolean support){
         if(channel !=null){
             if(channel.isWritable()){
                 channel.writeAndFlush(new ClientStatusUpdateOUT(username, alive, underfire, mission, support));

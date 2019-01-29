@@ -57,27 +57,13 @@ public class MainActivity extends AppCompatActivity
         return mapFragment;
     }
 
-    public static boolean alive, mission, underFire, support;
+    public static boolean alive = true, mission, underFire, support;
 
     //Floating Buttons
     private static FloatingActionButton hitFloatingButton;
     private static FloatingActionButton supportFloatingButton;
     private static FloatingActionButton underfireFloatingButton;
     private static FloatingActionButton missionFloatingButton;
-
-    public static void setStatus(boolean palive, boolean pmission,boolean punderFire, boolean psupport){
-        alive = palive;
-        mission = pmission;
-        underFire = punderFire;
-        support = psupport;
-        Log.i("Blablup", "alive" + alive + "fire " + underFire);
-        setAliveIcon();
-        setUnderFireIcon();
-        setMissionIcon();
-        setSupportIcon();
-    }
-
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -106,26 +92,26 @@ public class MainActivity extends AppCompatActivity
         missionFloatingButton = (FloatingActionButton) findViewById(R.id.missionfb);
         hitFloatingButton.setOnClickListener(view -> {
             alive = !alive;
-            nettyClient.sendClientStatusPositionOUTPackage(NettyClient.getUsername(), alive, underFire, mission, support);
+            nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
             setAliveIcon();
         });
 
         supportFloatingButton.setOnClickListener(view -> {
             support = !support;
-            nettyClient.sendClientStatusPositionOUTPackage(NettyClient.getUsername(), alive, underFire, mission, support);
+            nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
             setSupportIcon();
         });
 
         underfireFloatingButton.setOnClickListener(view -> {
             underFire = !underFire;
-            nettyClient.sendClientStatusPositionOUTPackage(NettyClient.getUsername(), alive, underFire, mission, support);
-           setUnderFireIcon();
+            nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
+            setUnderFireIcon();
         });
 
         missionFloatingButton.setOnClickListener(view -> {
             mission = !mission;
-            nettyClient.sendClientStatusPositionOUTPackage(NettyClient.getUsername(), alive, underFire, mission, support);
-           setMissionIcon();
+            nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
+            setMissionIcon();
         });
 
         final FloatingActionButton currentlocationFloatingButton = (FloatingActionButton) findViewById(R.id.currentlocationfb);
@@ -324,26 +310,28 @@ public class MainActivity extends AppCompatActivity
     }
 
     //Setting floating Button icons
-    public static void setAliveIcon(){
+    public static void setAliveIcon() {
         if (alive)
             hitFloatingButton.setImageResource(R.drawable.ic_fb_hit);
         else
             hitFloatingButton.setImageResource(R.drawable.ic_fb_healed);
     }
-    public static void setUnderFireIcon(){
+
+    public static void setUnderFireIcon() {
         if (underFire)
             underfireFloatingButton.setImageResource(R.drawable.ic_not_underfire);
         else
             underfireFloatingButton.setImageResource(R.drawable.ic_under_fire);
     }
-    public static void setMissionIcon(){
+
+    public static void setMissionIcon() {
         if (mission)
             missionFloatingButton.setImageResource(R.drawable.ic_mission_success);
         else
             missionFloatingButton.setImageResource(R.drawable.ic_fb_mission);
     }
 
-    public static void setSupportIcon(){
+    public static void setSupportIcon() {
         if (support)
             supportFloatingButton.setImageResource(R.drawable.ic_no_support);
         else
