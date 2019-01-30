@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity
         return mapFragment;
     }
 
-    public static boolean alive = true, mission, underFire, support;
+    public static boolean alive = true, mission = false, underFire = false, support = false;
 
     //Floating Buttons
     private static FloatingActionButton hitFloatingButton;
@@ -92,37 +92,47 @@ public class MainActivity extends AppCompatActivity
         underfireFloatingButton = (FloatingActionButton) findViewById(R.id.underfirefb);
         missionFloatingButton = (FloatingActionButton) findViewById(R.id.missionfb);
         hitFloatingButton.setOnClickListener(view -> {
-            alive = !alive;
-            nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
-            setAliveIcon();
-            mapFragment.setIcon(mapFragment.ownMarker);
+            if(mapFragment != null && mapFragment.ownMarker != null) {
+                alive = !alive;
+                nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
+                setAliveIcon();
+                mapFragment.setIcon(mapFragment.ownMarker);
+            }
         });
 
         supportFloatingButton.setOnClickListener(view -> {
-            support = !support;
-            nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
-            setSupportIcon();
-            mapFragment.setIcon(mapFragment.ownMarker);
-
+            if(mapFragment != null && mapFragment.ownMarker != null) {
+                support = !support;
+                nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
+                setSupportIcon();
+                mapFragment.setIcon(mapFragment.ownMarker);
+            }
         });
 
         underfireFloatingButton.setOnClickListener(view -> {
-            underFire = !underFire;
-            nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
-            setUnderFireIcon();
-            mapFragment.setIcon(mapFragment.ownMarker);
-
+            if(mapFragment != null && mapFragment.ownMarker != null) {
+                underFire = !underFire;
+                nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
+                setUnderFireIcon();
+                mapFragment.setIcon(mapFragment.ownMarker);
+            }
         });
 
         missionFloatingButton.setOnClickListener(view -> {
-            mission = !mission;
-            nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
-            setMissionIcon();
-            mapFragment.setIcon(mapFragment.ownMarker);
+            if(mapFragment != null && mapFragment.ownMarker != null) {
+                mission = !mission;
+                nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
+                setMissionIcon();
+                mapFragment.setIcon(mapFragment.ownMarker);
+            }
         });
 
         final FloatingActionButton currentlocationFloatingButton = (FloatingActionButton) findViewById(R.id.currentlocationfb);
-        currentlocationFloatingButton.setOnClickListener(view -> mapFragment.setCamera(mapFragment.ownMarker.getPosition()));
+        currentlocationFloatingButton.setOnClickListener(view -> {
+            if (mapFragment != null && mapFragment.ownMarker != null) {
+                mapFragment.setCamera(mapFragment.ownMarker.getPosition());
+            }
+        });
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -325,8 +335,7 @@ public class MainActivity extends AppCompatActivity
             hitFloatingButton.setImageResource(R.drawable.ic_fb_hit);
             hitFloatingButton.hide();
             hitFloatingButton.show();
-        }
-        else {
+        } else {
             missionFloatingButton.hide();
             supportFloatingButton.hide();
             underfireFloatingButton.hide();
@@ -343,8 +352,7 @@ public class MainActivity extends AppCompatActivity
             underfireFloatingButton.setImageResource(R.drawable.ic_not_underfire);
             underfireFloatingButton.hide();
             underfireFloatingButton.show();
-        }
-        else {
+        } else {
             missionFloatingButton.show();
             supportFloatingButton.show();
             underfireFloatingButton.setImageResource(R.drawable.ic_under_fire);
@@ -361,8 +369,7 @@ public class MainActivity extends AppCompatActivity
             missionFloatingButton.setImageResource(R.drawable.ic_mission_success);
             missionFloatingButton.hide();
             missionFloatingButton.show();
-        }
-        else {
+        } else {
             underfireFloatingButton.show();
             supportFloatingButton.show();
             hitFloatingButton.show();
@@ -378,8 +385,7 @@ public class MainActivity extends AppCompatActivity
             supportFloatingButton.setImageResource(R.drawable.ic_no_support);
             supportFloatingButton.hide();
             supportFloatingButton.show();
-        }
-        else {
+        } else {
             missionFloatingButton.show();
             supportFloatingButton.setImageResource(R.drawable.ic_fb_support);
             supportFloatingButton.hide();

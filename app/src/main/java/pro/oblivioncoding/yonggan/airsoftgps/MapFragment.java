@@ -83,8 +83,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     public static HashMap<Integer, Marker> userMarker = new HashMap<Integer, Marker>();
 
-    public static ArrayList<Marker> userMarkers = new ArrayList<Marker>();
-
     public MapFragment() {
         // Required empty public constructor
     }

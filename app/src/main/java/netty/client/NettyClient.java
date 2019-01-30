@@ -70,7 +70,7 @@ public class NettyClient {
 
             //noinspection ConstantConditions
             if (ex instanceof ConnectException) {
-                Log.i("NettyConnectionError", "Can´t connect to the Server");
+                Log.i("NettyConnectionError", "Can´t connect to the Server: "+ ex.getMessage());
                 LoginActivity.loginConsumer.accept(false);
             } else {
                 //TODO Implement Log Files
