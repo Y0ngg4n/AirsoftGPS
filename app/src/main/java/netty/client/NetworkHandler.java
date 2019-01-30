@@ -36,6 +36,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
                 loggedIN = true;
                 try {
                     NettyClient.sendClientPositionOUTPackage(MainActivity.getLocationManager().getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude(), MainActivity.getLocationManager().getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude());
+                    NettyClient.sendClientStatusPositionOUTPackage(MainActivity.alive, MainActivity.underFire, MainActivity.mission, MainActivity.support);
                 } catch (Exception e) {
                     Log.i("NettyPositionError", "Couldn´t send first Position to the Server due to missing Location Permissions.");
                 }
@@ -53,9 +54,8 @@ public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
             Log.i("NettyAllPosition", String.valueOf(clientAllPositionsIN.getJsonArray()));
 
             for (JsonElement jsonElement : clientAllPositionsIN.getJsonArray()) {
-                if (jsonElement.getAsJsonObject().get("username").getAsString().equals(NettyClient.getUsername())) {
-                    Log.i("NettyAllPosition","Same username");
-                }
+                Log.i("NettyAllPosition", jsonElement.getAsJsonObject().get("username").getAsString());
+
                 MainActivity.getMapFragment().createMarker(
                         jsonElement.getAsJsonObject().get("latitude").getAsDouble(),
                         jsonElement.getAsJsonObject().get("longitude").getAsDouble(),

@@ -26,6 +26,7 @@ public class Login extends AppCompatActivity {
     private static Context ctx;
 
     private static Button loginButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,12 +38,12 @@ public class Login extends AppCompatActivity {
         loginButton.setOnClickListener(v -> {
             //Connect to Server
             loginButton.setEnabled(false);
-                AsyncTask.execute(() -> {
-                    MainActivity.nettyClient = new NettyClient(
-                            ((TextView) findViewById(R.id.username)).getText().toString(),
-                            ((TextView) findViewById(R.id.password)).getText().toString(), HOST, PORT);
+            AsyncTask.execute(() -> {
+                MainActivity.nettyClient = new NettyClient(
+                        ((TextView) findViewById(R.id.username)).getText().toString(),
+                        ((TextView) findViewById(R.id.password)).getText().toString(), HOST, PORT);
 
-                });
+            });
 
         });
 
@@ -50,15 +51,16 @@ public class Login extends AppCompatActivity {
     }
 
 
-    public static void loginFailed(){
-        if(errorMessage != null){
+    public static void loginFailed() {
+        if (errorMessage != null) {
             errorMessage.setText("Login failed. Please try another username or password!");
+            loginButton.setEnabled(true);
         }
-        loginButton.setEnabled(true);
+
     }
 
-    public static void loginSuccess(){
-        if(ctx != null){
+    public static void loginSuccess() {
+        if (ctx != null) {
             ctx.startActivity(new Intent(ctx, MainActivity.class));
         }
     }

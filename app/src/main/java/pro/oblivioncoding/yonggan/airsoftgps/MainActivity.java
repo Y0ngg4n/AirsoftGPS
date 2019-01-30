@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -94,24 +95,30 @@ public class MainActivity extends AppCompatActivity
             alive = !alive;
             nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
             setAliveIcon();
+            mapFragment.setIcon(mapFragment.ownMarker);
         });
 
         supportFloatingButton.setOnClickListener(view -> {
             support = !support;
             nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
             setSupportIcon();
+            mapFragment.setIcon(mapFragment.ownMarker);
+
         });
 
         underfireFloatingButton.setOnClickListener(view -> {
             underFire = !underFire;
             nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
             setUnderFireIcon();
+            mapFragment.setIcon(mapFragment.ownMarker);
+
         });
 
         missionFloatingButton.setOnClickListener(view -> {
             mission = !mission;
             nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
             setMissionIcon();
+            mapFragment.setIcon(mapFragment.ownMarker);
         });
 
         final FloatingActionButton currentlocationFloatingButton = (FloatingActionButton) findViewById(R.id.currentlocationfb);
@@ -311,31 +318,73 @@ public class MainActivity extends AppCompatActivity
 
     //Setting floating Button icons
     public static void setAliveIcon() {
-        if (alive)
+        if (alive) {
+            missionFloatingButton.show();
+            supportFloatingButton.show();
+            underfireFloatingButton.show();
             hitFloatingButton.setImageResource(R.drawable.ic_fb_hit);
-        else
+            hitFloatingButton.hide();
+            hitFloatingButton.show();
+        }
+        else {
+            missionFloatingButton.hide();
+            supportFloatingButton.hide();
+            underfireFloatingButton.hide();
             hitFloatingButton.setImageResource(R.drawable.ic_fb_healed);
+            hitFloatingButton.hide();
+            hitFloatingButton.show();
+        }
     }
 
     public static void setUnderFireIcon() {
-        if (underFire)
+        if (underFire) {
+            missionFloatingButton.hide();
+            supportFloatingButton.hide();
             underfireFloatingButton.setImageResource(R.drawable.ic_not_underfire);
-        else
+            underfireFloatingButton.hide();
+            underfireFloatingButton.show();
+        }
+        else {
+            missionFloatingButton.show();
+            supportFloatingButton.show();
             underfireFloatingButton.setImageResource(R.drawable.ic_under_fire);
+            underfireFloatingButton.hide();
+            underfireFloatingButton.show();
+        }
     }
 
     public static void setMissionIcon() {
-        if (mission)
+        if (mission) {
+            underfireFloatingButton.hide();
+            supportFloatingButton.hide();
+            hitFloatingButton.hide();
             missionFloatingButton.setImageResource(R.drawable.ic_mission_success);
-        else
+            missionFloatingButton.hide();
+            missionFloatingButton.show();
+        }
+        else {
+            underfireFloatingButton.show();
+            supportFloatingButton.show();
+            hitFloatingButton.show();
             missionFloatingButton.setImageResource(R.drawable.ic_fb_mission);
+            missionFloatingButton.hide();
+            missionFloatingButton.show();
+        }
     }
 
     public static void setSupportIcon() {
-        if (support)
+        if (support) {
+            missionFloatingButton.hide();
             supportFloatingButton.setImageResource(R.drawable.ic_no_support);
-        else
+            supportFloatingButton.hide();
+            supportFloatingButton.show();
+        }
+        else {
+            missionFloatingButton.show();
             supportFloatingButton.setImageResource(R.drawable.ic_fb_support);
+            supportFloatingButton.hide();
+            supportFloatingButton.show();
+        }
     }
 
     private void turnGPSOn() {

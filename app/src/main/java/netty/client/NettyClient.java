@@ -58,7 +58,7 @@ public class NettyClient {
                     channel = channelFuture.channel();
                     channel.writeAndFlush(new AuthPacketOUT(username, password));
                     Log.i("NettyConnectionSuccess", "Successfully connected to the Server with the Channel-ID: " + channel.id());
-                    sendClientStatusPositionOUTPackage(MainActivity.alive, MainActivity.underFire, MainActivity.mission, MainActivity.support);
+
                 } else {
                     group.shutdownGracefully();
                 }

@@ -4,11 +4,16 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -16,6 +21,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -75,6 +82,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public static Marker ownMarker;
 
     public static HashMap<Integer, Marker> userMarker = new HashMap<Integer, Marker>();
+
+    public static ArrayList<Marker> userMarkers = new ArrayList<Marker>();
 
     public MapFragment() {
         // Required empty public constructor
@@ -166,13 +175,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void setOwnMarker(Location location) {
 
         if (googleMap != null && location != null) {
-
             if (ownMarker != null) ownMarker.remove();
             Log.i("LocationSet", "Setting your own Location");
             googleMap.setInfoWindowAdapter(new CustomOwnMarkerInfoWindowAdapter(getContext(), "Your Position", location.getLatitude(), location.getLongitude()));
             ownMarker = googleMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(location.getLatitude(), location.getLongitude()))
-            );
+                    .position(new LatLng(location.getLatitude(), location.getLongitude())));
             if (!firstTimeCamera) {
                 firstTimeCamera = !firstTimeCamera;
                 setCamera(new LatLng(location.getLatitude(), location.getLongitude()));
@@ -190,26 +197,61 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 5f));
     }
 
-    public void createMarker(double latitude, double longitude, int userID, String username, Timestamp timestamp,  String teamname, boolean alive, boolean underfire, boolean mission, boolean support) {
+    public void createMarker(double latitude, double longitude, int userID, String username, Timestamp timestamp, String teamname, boolean alive, boolean underfire, boolean mission, boolean support) {
         if (googleMap != null) {
             getActivity().runOnUiThread(() -> {
                 googleMap.setInfoWindowAdapter(new CustomMarkerInfoWindowAdaper(getContext(), username + " (" + userID + ")", latitude, longitude, simpleDateFormat.format(new Date(timestamp.getTime())), teamname, alive, underfire, mission, support));
                 if (NettyClient.getUsername().equals(username)) {
                     Marker marker = googleMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(latitude, longitude))
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                            .position(new LatLng(latitude, longitude)));
+                    setIcon(marker);
                     userMarker.put(userID, marker);
                     Log.i("Marker", "Own Server-Marker created at " + marker.getPosition());
                 } else {
+                    googleMap.setInfoWindowAdapter(new CustomMarkerInfoWindowAdaper(getContext(), username + " (" + userID + ")", latitude, longitude, simpleDateFormat.format(new Date(timestamp.getTime())), teamname, alive, underfire, mission, support));
                     Marker marker = googleMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(latitude, longitude))
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                            .position(new LatLng(latitude, longitude)));
+                    setIcon(marker);
                     userMarker.put(userID, marker);
                     Log.i("Marker", "Marker created at " + marker.getPosition());
                 }
+                Log.i("Marker", String.valueOf(userMarker));
             });
         } else {
             Log.i("Marker", "GoogleMap is null");
+        }
+    }
+
+    private BitmapDescriptor getBitmapDescriptor(int id) {
+        Drawable vectorDrawable = getResources().getDrawable(id);
+        int h = ((int) dpTopixel(getContext(), 50));
+        int w = ((int) dpTopixel(getContext(), 50));
+        vectorDrawable.setBounds(0, 0, w, h);
+        Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bm);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bm);
+    }
+
+    private static float dpTopixel(Context c, float dp) {
+        float density = c.getResources().getDisplayMetrics().density;
+        float pixel = dp * density;
+        return pixel;
+    }
+
+    public void setIcon(Marker marker){
+        if(MainActivity.mission){
+            marker.setIcon(getBitmapDescriptor(R.drawable.ic_pin_alivemission));
+        }else if(MainActivity.alive && MainActivity.underFire && MainActivity.support){
+            marker.setIcon(getBitmapDescriptor(R.drawable.ic_pin_aliveunderfiresupport));
+        }else if(MainActivity.alive && MainActivity.underFire && !MainActivity.support){
+            marker.setIcon(getBitmapDescriptor(R.drawable.ic_pin_aliveunderfire));
+        }else if(MainActivity.alive && !MainActivity.underFire && MainActivity.support){
+            marker.setIcon(getBitmapDescriptor(R.drawable.ic_pin_alivenotunderfiresupport));
+        }else if(MainActivity.alive && !MainActivity.underFire && !MainActivity.support){
+            marker.setIcon(getBitmapDescriptor(R.drawable.ic_pin_alivenotunderfire));
+        }else if(!MainActivity.alive){
+            marker.setIcon(getBitmapDescriptor(R.drawable.ic_pin_notalivenotunderfire));
         }
     }
 }
