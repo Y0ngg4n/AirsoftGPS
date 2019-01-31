@@ -83,6 +83,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     public static HashMap<Integer, Marker> userMarker = new HashMap<Integer, Marker>();
 
+    public static HashMap<Marker, MarkerData> markerData = new HashMap<Marker, MarkerData>();
+
     public MapFragment() {
         // Required empty public constructor
     }
@@ -153,6 +155,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         locationManager = ((MainActivity) getActivity()).getLocationManager();
 
         setOwnMarker(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+
+        googleMap.setOnMarkerClickListener(marker -> {
+            MarkerData markerData0 = markerData.get(marker);
+            if (marker == ownMarker) {
+                googleMap.setInfoWindowAdapter(new CustomOwnMarkerInfoWindowAdapter(getContext(), markerData0.title, markerData0.latitude, markerData0.longitude));
+            } else {
+                googleMap.setInfoWindowAdapter(new CustomMarkerInfoWindowAdaper(getContext(), markerData0.title, markerData0.latitude, markerData0.longitude, markerData0.timestamp, markerData0.teamname, markerData0.alive, markerData0.underfire, markerData0.mission, markerData0.support));
+            }
+            marker.showInfoWindow();
+            return true;
+        });
     }
 
     /**
@@ -175,7 +188,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         if (googleMap != null && location != null) {
             if (ownMarker != null) ownMarker.remove();
             Log.i("LocationSet", "Setting your own Location");
-            googleMap.setInfoWindowAdapter(new CustomOwnMarkerInfoWindowAdapter(getContext(), "Your Position", location.getLatitude(), location.getLongitude()));
             ownMarker = googleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(location.getLatitude(), location.getLongitude())));
             if (!firstTimeCamera) {
@@ -198,20 +210,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void createMarker(double latitude, double longitude, int userID, String username, Timestamp timestamp, String teamname, boolean alive, boolean underfire, boolean mission, boolean support) {
         if (googleMap != null) {
             getActivity().runOnUiThread(() -> {
-                googleMap.setInfoWindowAdapter(new CustomMarkerInfoWindowAdaper(getContext(), username + " (" + userID + ")", latitude, longitude, simpleDateFormat.format(new Date(timestamp.getTime())), teamname, alive, underfire, mission, support));
                 if (NettyClient.getUsername().equals(username)) {
                     Marker marker = googleMap.addMarker(new MarkerOptions()
                             .position(new LatLng(latitude, longitude)));
                     setIcon(marker);
+                    if(userMarker.containsKey(userID)) userMarker.get(userID).remove();
                     userMarker.put(userID, marker);
                     Log.i("Marker", "Own Server-Marker created at " + marker.getPosition());
+                    markerData.put(marker, new MarkerData(username + " (" + userID + ")", latitude, longitude, simpleDateFormat.format(new Date(timestamp.getTime())), teamname, alive, underfire, mission, support));
                 } else {
-                    googleMap.setInfoWindowAdapter(new CustomMarkerInfoWindowAdaper(getContext(), username + " (" + userID + ")", latitude, longitude, simpleDateFormat.format(new Date(timestamp.getTime())), teamname, alive, underfire, mission, support));
                     Marker marker = googleMap.addMarker(new MarkerOptions()
                             .position(new LatLng(latitude, longitude)));
                     setIcon(marker);
+                    if(userMarker.containsKey(userID)) userMarker.get(userID).remove();
                     userMarker.put(userID, marker);
                     Log.i("Marker", "Marker created at " + marker.getPosition());
+                    markerData.put(marker, new MarkerData(username + " (" + userID + ")", latitude, longitude, simpleDateFormat.format(new Date(timestamp.getTime())), teamname, alive, underfire, mission, support));
                 }
                 Log.i("Marker", String.valueOf(userMarker));
             });
@@ -237,19 +251,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         return pixel;
     }
 
-    public void setIcon(Marker marker){
-        if(MainActivity.mission){
+    public void setIcon(Marker marker) {
+        if (MainActivity.mission) {
             marker.setIcon(getBitmapDescriptor(R.drawable.ic_pin_alivemission));
-        }else if(MainActivity.alive && MainActivity.underFire && MainActivity.support){
+        } else if (MainActivity.alive && MainActivity.underFire && MainActivity.support) {
             marker.setIcon(getBitmapDescriptor(R.drawable.ic_pin_aliveunderfiresupport));
-        }else if(MainActivity.alive && MainActivity.underFire && !MainActivity.support){
+        } else if (MainActivity.alive && MainActivity.underFire && !MainActivity.support) {
             marker.setIcon(getBitmapDescriptor(R.drawable.ic_pin_aliveunderfire));
-        }else if(MainActivity.alive && !MainActivity.underFire && MainActivity.support){
+        } else if (MainActivity.alive && !MainActivity.underFire && MainActivity.support) {
             marker.setIcon(getBitmapDescriptor(R.drawable.ic_pin_alivenotunderfiresupport));
-        }else if(MainActivity.alive && !MainActivity.underFire && !MainActivity.support){
+        } else if (MainActivity.alive && !MainActivity.underFire && !MainActivity.support) {
             marker.setIcon(getBitmapDescriptor(R.drawable.ic_pin_alivenotunderfire));
-        }else if(!MainActivity.alive){
+        } else if (!MainActivity.alive) {
             marker.setIcon(getBitmapDescriptor(R.drawable.ic_pin_notalivenotunderfire));
         }
     }
+
 }
