@@ -81,6 +81,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     public static Marker ownMarker;
 
+    public static OwnMarkerData ownMarkerData;
+
     public static HashMap<Integer, Marker> userMarker = new HashMap<Integer, Marker>();
 
     public static HashMap<Marker, MarkerData> markerData = new HashMap<Marker, MarkerData>();
@@ -150,6 +152,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Log.i("MapReady", "Map Loaded");
+        clearMap();
         this.googleMap = googleMap;
         this.googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         locationManager = ((MainActivity) getActivity()).getLocationManager();
@@ -157,11 +160,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         setOwnMarker(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
 
         googleMap.setOnMarkerClickListener(marker -> {
-            MarkerData markerData0 = markerData.get(marker);
-            if (marker == ownMarker) {
-                googleMap.setInfoWindowAdapter(new CustomOwnMarkerInfoWindowAdapter(getContext(), markerData0.title, markerData0.latitude, markerData0.longitude));
+            Log.i("Marker", "Marker: " + marker);
+            if (marker.equals(ownMarker)) {
+                Log.i("InfoWindow", "Own");
+                googleMap.setInfoWindowAdapter(new CustomOwnMarkerInfoWindowAdapter(getContext(), ownMarkerData.getTitle(), ownMarkerData.getLatitude(), ownMarkerData.getLongitude()));
             } else {
-                googleMap.setInfoWindowAdapter(new CustomMarkerInfoWindowAdaper(getContext(), markerData0.title, markerData0.latitude, markerData0.longitude, markerData0.timestamp, markerData0.teamname, markerData0.alive, markerData0.underfire, markerData0.mission, markerData0.support));
+                MarkerData markerData0 = markerData.get(marker);
+                Log.i("InfoWindow", "User");
+                googleMap.setInfoWindowAdapter(new CustomMarkerInfoWindowAdaper(getContext(), markerData0.getTitle(), markerData0.getLatitude(), markerData0.getLongitude(), markerData0.getTimestamp(), markerData0.getTeamname(), markerData0.isAlive(), markerData0.isUnderfire(), markerData0.isMission(), markerData0.isSupport()));
             }
             marker.showInfoWindow();
             return true;
@@ -190,6 +196,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             Log.i("LocationSet", "Setting your own Location");
             ownMarker = googleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(location.getLatitude(), location.getLongitude())));
+           ownMarkerData = new OwnMarkerData("You are here!", location.getLatitude(), location.getLongitude());
             if (!firstTimeCamera) {
                 firstTimeCamera = !firstTimeCamera;
                 setCamera(new LatLng(location.getLatitude(), location.getLongitude()));
@@ -214,7 +221,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     Marker marker = googleMap.addMarker(new MarkerOptions()
                             .position(new LatLng(latitude, longitude)));
                     setIcon(marker);
-                    if(userMarker.containsKey(userID)) userMarker.get(userID).remove();
+                    if (userMarker.containsKey(userID)) userMarker.get(userID).remove();
                     userMarker.put(userID, marker);
                     Log.i("Marker", "Own Server-Marker created at " + marker.getPosition());
                     markerData.put(marker, new MarkerData(username + " (" + userID + ")", latitude, longitude, simpleDateFormat.format(new Date(timestamp.getTime())), teamname, alive, underfire, mission, support));
@@ -222,7 +229,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     Marker marker = googleMap.addMarker(new MarkerOptions()
                             .position(new LatLng(latitude, longitude)));
                     setIcon(marker);
-                    if(userMarker.containsKey(userID)) userMarker.get(userID).remove();
+                    if (userMarker.containsKey(userID)) userMarker.get(userID).remove();
                     userMarker.put(userID, marker);
                     Log.i("Marker", "Marker created at " + marker.getPosition());
                     markerData.put(marker, new MarkerData(username + " (" + userID + ")", latitude, longitude, simpleDateFormat.format(new Date(timestamp.getTime())), teamname, alive, underfire, mission, support));

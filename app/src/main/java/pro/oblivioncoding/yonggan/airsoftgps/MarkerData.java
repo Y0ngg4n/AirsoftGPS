@@ -1,14 +1,12 @@
 package pro.oblivioncoding.yonggan.airsoftgps;
 
-import android.content.Context;
-import android.view.View;
 
 public class MarkerData {
 
-    public static double latitude;
-    public static double longitude;
-    public static String title, timestamp,teamname;
-    public static boolean alive, underfire, mission, support;
+    private double latitude;
+    private double longitude;
+    private String title, timestamp,teamname;
+    private boolean alive, underfire, mission, support;
 
 
     public MarkerData(String title, double latitude, double longitude, String timestamp, String teamname, boolean alive, boolean underfire, boolean mission, boolean support){
@@ -22,5 +20,42 @@ public class MarkerData {
         this.mission = mission;
         this.support = support;
     }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public String getTeamname() {
+        return teamname;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    public boolean isMission() {
+        return mission;
+    }
+
+    public boolean isSupport() {
+        return support;
+    }
+
+    public boolean isUnderfire() {
+        return underfire;
+    }
 }
+
 
