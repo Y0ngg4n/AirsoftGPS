@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
@@ -27,6 +28,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -35,9 +37,13 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -45,6 +51,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import netty.client.NettyClient;
 
@@ -87,18 +94,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     public static HashMap<Marker, MarkerData> markerData = new HashMap<Marker, MarkerData>();
 
+    private static Polygon teamAreaPolygon;
+
+    private static ArrayList<Circle> teamAreaCircleList = new ArrayList<Circle>();
+
     public MapFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MapFragment.
-     */
     // TODO: Rename and change types and number of parameters
     public static MapFragment newInstance(String param1, String param2) {
         MapFragment fragment = new MapFragment();
@@ -172,18 +175,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             marker.showInfoWindow();
             return true;
         });
+
+        Toast.makeText(getContext(), "You may have to move or manual reload to see the other Players", Toast.LENGTH_LONG).show();
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
@@ -196,7 +191,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             Log.i("LocationSet", "Setting your own Location");
             ownMarker = googleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(location.getLatitude(), location.getLongitude())));
-           ownMarkerData = new OwnMarkerData("You are here!", location.getLatitude(), location.getLongitude());
+            ownMarkerData = new OwnMarkerData("You are here!", location.getLatitude(), location.getLongitude());
             if (!firstTimeCamera) {
                 firstTimeCamera = !firstTimeCamera;
                 setCamera(new LatLng(location.getLatitude(), location.getLongitude()));
@@ -220,19 +215,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 if (NettyClient.getUsername().equals(username)) {
                     Marker marker = googleMap.addMarker(new MarkerOptions()
                             .position(new LatLng(latitude, longitude)));
-                    setIcon(marker);
                     if (userMarker.containsKey(userID)) userMarker.get(userID).remove();
                     userMarker.put(userID, marker);
                     Log.i("Marker", "Own Server-Marker created at " + marker.getPosition());
-                    markerData.put(marker, new MarkerData(username + " (" + userID + ")", latitude, longitude, simpleDateFormat.format(new Date(timestamp.getTime())), teamname, alive, underfire, mission, support));
+                    MarkerData playerMarkerData = new MarkerData(username + " (" + userID + ")", latitude, longitude, simpleDateFormat.format(new Date(timestamp.getTime())), teamname, alive, underfire, mission, support);
+                    markerData.put(marker, playerMarkerData);
+                    setIcon(marker, playerMarkerData);
                 } else {
                     Marker marker = googleMap.addMarker(new MarkerOptions()
                             .position(new LatLng(latitude, longitude)));
-                    setIcon(marker);
                     if (userMarker.containsKey(userID)) userMarker.get(userID).remove();
                     userMarker.put(userID, marker);
                     Log.i("Marker", "Marker created at " + marker.getPosition());
-                    markerData.put(marker, new MarkerData(username + " (" + userID + ")", latitude, longitude, simpleDateFormat.format(new Date(timestamp.getTime())), teamname, alive, underfire, mission, support));
+                    MarkerData playerMarkerData = new MarkerData(username + " (" + userID + ")", latitude, longitude, simpleDateFormat.format(new Date(timestamp.getTime())), teamname, alive, underfire, mission, support);
+                    markerData.put(marker, playerMarkerData);
+                    setIcon(marker, playerMarkerData);
                 }
                 Log.i("Marker", String.valueOf(userMarker));
             });
@@ -258,20 +255,52 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         return pixel;
     }
 
-    public void setIcon(Marker marker) {
-        if (MainActivity.mission) {
+    public void setIcon(Marker marker, MarkerData markerData) {
+        Log.i("Marker", "Setting Icon of Marker");
+        if (markerData.isMission()) {
             marker.setIcon(getBitmapDescriptor(R.drawable.ic_pin_alivemission));
-        } else if (MainActivity.alive && MainActivity.underFire && MainActivity.support) {
+        } else if (markerData.isAlive() && markerData.isUnderfire() && markerData.isSupport()) {
             marker.setIcon(getBitmapDescriptor(R.drawable.ic_pin_aliveunderfiresupport));
-        } else if (MainActivity.alive && MainActivity.underFire && !MainActivity.support) {
+        } else if (markerData.isAlive() && markerData.isUnderfire() && !markerData.isSupport()) {
             marker.setIcon(getBitmapDescriptor(R.drawable.ic_pin_aliveunderfire));
-        } else if (MainActivity.alive && !MainActivity.underFire && MainActivity.support) {
+        } else if (markerData.isAlive() && !markerData.isUnderfire() && markerData.isSupport()) {
             marker.setIcon(getBitmapDescriptor(R.drawable.ic_pin_alivenotunderfiresupport));
-        } else if (MainActivity.alive && !MainActivity.underFire && !MainActivity.support) {
+        } else if (markerData.isAlive() && !markerData.isUnderfire() && !markerData.isSupport()) {
             marker.setIcon(getBitmapDescriptor(R.drawable.ic_pin_alivenotunderfire));
-        } else if (!MainActivity.alive) {
+        } else if (!markerData.isAlive()) {
             marker.setIcon(getBitmapDescriptor(R.drawable.ic_pin_notalivenotunderfire));
         }
+    }
+
+    public void setAreaPolygons(){
+        PolygonOptions polygonOptions = new PolygonOptions();
+        for(Marker marker : userMarker.values()){
+            polygonOptions.add(marker.getPosition());
+        }
+        polygonOptions.fillColor(Color.BLUE);
+        polygonOptions.strokeColor(Color.BLUE);
+        teamAreaPolygon = googleMap.addPolygon(polygonOptions);
+    }
+
+    public void removeAreaPolygons(){
+        if(teamAreaPolygon != null){
+            teamAreaPolygon.remove();
+        }
+    }
+
+    public void setAreaCircles(){
+        for(Marker marker : userMarker.values()){
+            teamAreaCircleList.add(googleMap.addCircle(new CircleOptions().center(marker.getPosition()).radius(100).fillColor(Color.GREEN).strokeColor(Color.GREEN)));
+        }
+    }
+
+    public void removeAreaCircles(){
+        for(Circle circle : teamAreaCircleList){
+            if(circle != null){
+                circle.remove();
+            }
+        }
+        teamAreaCircleList.clear();
     }
 
 }

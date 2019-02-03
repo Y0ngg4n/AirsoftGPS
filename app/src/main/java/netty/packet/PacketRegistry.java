@@ -3,10 +3,12 @@ import android.util.Log;
 
 import netty.packet.in.ClientAllPositionsIN;
 import netty.packet.in.LoginResponsePacketIN;
+import netty.packet.in.OrgaAuthIN;
 
 public enum PacketRegistry {
     LoginResponsePacketIN(LoginResponsePacketIN.class),
-    ClientAllPositionsIN(ClientAllPositionsIN.class);
+    ClientAllPositionsIN(ClientAllPositionsIN.class),
+    OrgaAuthIN(OrgaAuthIN.class);
 
     private Class<? extends PacketIN> clazz;
 
@@ -27,7 +29,6 @@ public enum PacketRegistry {
         }
         return null;
     }
-
 
     public Class<? extends PacketIN> getClazz() {
         return clazz;

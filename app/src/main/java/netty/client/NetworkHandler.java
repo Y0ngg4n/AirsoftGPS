@@ -16,9 +16,11 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import netty.packet.PacketIN;
 import netty.packet.in.LoginResponsePacketIN;
 import netty.packet.in.ClientAllPositionsIN;
+import netty.packet.in.OrgaAuthIN;
 import pro.oblivioncoding.yonggan.airsoftgps.LoginActivity;
 import pro.oblivioncoding.yonggan.airsoftgps.MainActivity;
 import pro.oblivioncoding.yonggan.airsoftgps.MapFragment;
+import pro.oblivioncoding.yonggan.airsoftgps.R;
 
 public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
 
@@ -68,6 +70,21 @@ public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
                         jsonElement.getAsJsonObject().get("mission").getAsBoolean(),
                         jsonElement.getAsJsonObject().get("support").getAsBoolean()
                 );
+                if(MainActivity.showAreaPolygons){
+                    MainActivity.mapFragment.removeAreaPolygons();
+                    MainActivity.mapFragment.setAreaPolygons();
+                }
+
+                if(MainActivity.showAreaCircles){
+                    MainActivity.mapFragment.removeAreaCircles();
+                    MainActivity.mapFragment.setAreaCircles();
+                }
+            }
+        }else if(packet instanceof OrgaAuthIN){
+            final OrgaAuthIN orgaAuthIN = (OrgaAuthIN) packet;
+            if(orgaAuthIN.isSuccessfull()) {
+                MainActivity.enableOrga();
+                Log.i("Orga", "Incoming OrgaAuth Packet");
             }
         }
     }
@@ -76,5 +93,10 @@ public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
     public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) {
         Log.i("NetworkHandlerError", cause.getMessage());
         cause.printStackTrace();
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        MainActivity.connectToServer(LoginActivity.username, LoginActivity.password, LoginActivity.HOST, LoginActivity.PORT);
     }
 }

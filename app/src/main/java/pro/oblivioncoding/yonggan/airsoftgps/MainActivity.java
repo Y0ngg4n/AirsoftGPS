@@ -31,11 +31,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import netty.client.NettyClient;
 import netty.client.NetworkHandler;
@@ -60,11 +65,15 @@ public class MainActivity extends AppCompatActivity
 
     public static boolean alive = true, mission = false, underFire = false, support = false;
 
+    public static boolean showAreaPolygons = false, showAreaCircles = false, showAreaHQs = true, showAreaRespawns = true;
+
     //Floating Buttons
     private static FloatingActionButton hitFloatingButton;
     private static FloatingActionButton supportFloatingButton;
     private static FloatingActionButton underfireFloatingButton;
     private static FloatingActionButton missionFloatingButton;
+    private static FloatingActionButton reloadFloatingButton;
+    private static FloatingActionButton addMarkerFloatingButton;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -92,40 +101,55 @@ public class MainActivity extends AppCompatActivity
         underfireFloatingButton = (FloatingActionButton) findViewById(R.id.underfirefb);
         missionFloatingButton = (FloatingActionButton) findViewById(R.id.missionfb);
         hitFloatingButton.setOnClickListener(view -> {
-            if(mapFragment != null && mapFragment.ownMarker != null) {
+            if (mapFragment != null && mapFragment.ownMarker != null) {
                 alive = !alive;
                 nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
                 setAliveIcon();
-                mapFragment.setIcon(mapFragment.ownMarker);
             }
         });
 
         supportFloatingButton.setOnClickListener(view -> {
-            if(mapFragment != null && mapFragment.ownMarker != null) {
+            if (mapFragment != null && mapFragment.ownMarker != null) {
                 support = !support;
                 nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
                 setSupportIcon();
-                mapFragment.setIcon(mapFragment.ownMarker);
             }
         });
 
         underfireFloatingButton.setOnClickListener(view -> {
-            if(mapFragment != null && mapFragment.ownMarker != null) {
+            if (mapFragment != null && mapFragment.ownMarker != null) {
                 underFire = !underFire;
                 nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
                 setUnderFireIcon();
-                mapFragment.setIcon(mapFragment.ownMarker);
             }
         });
 
         missionFloatingButton.setOnClickListener(view -> {
-            if(mapFragment != null && mapFragment.ownMarker != null) {
+            if (mapFragment != null && mapFragment.ownMarker != null) {
                 mission = !mission;
                 nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
                 setMissionIcon();
-                mapFragment.setIcon(mapFragment.ownMarker);
             }
         });
+
+
+        reloadFloatingButton = (FloatingActionButton) findViewById(R.id.reloadfb);
+        reloadFloatingButton.setOnClickListener(view -> {
+            reloadFloatingButton.setEnabled(false);
+            reloadFloatingButton.setImageResource(R.drawable.ic_reloading);
+            if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                MainActivity.nettyClient.sendClientPositionOUTPackage(MainActivity.locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude(), MainActivity.locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude());
+                MainActivity.nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
+            }
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    reloadFloatingButton.setEnabled(true);
+                    reloadFloatingButton.setImageResource(R.drawable.ic_reloading);
+                }
+            }, 60000L);
+        });
+
 
         final FloatingActionButton currentlocationFloatingButton = (FloatingActionButton) findViewById(R.id.currentlocationfb);
         currentlocationFloatingButton.setOnClickListener(view -> {
@@ -134,6 +158,8 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        addMarkerFloatingButton = (FloatingActionButton) findViewById(R.id.setMarker);
+        addMarkerFloatingButton.hide();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -227,7 +253,6 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction.commit();
 
         currentFragment = mapFragment;
-
     }
 
     @Override
@@ -255,10 +280,47 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.showAreaPolygon) {
+            if(item.isChecked()) {
+                showAreaPolygons = false;
+                MainActivity.mapFragment.removeAreaPolygons();
+                item.setChecked(false);
+            } else {
+                showAreaPolygons = true;
+                MainActivity.mapFragment.setAreaPolygons();
+                item.setChecked(true);
+            }
+            return true;
+        }else if(id == R.id.showAreaCircles){
+            if(item.isChecked()) {
+                showAreaCircles= false;
+                MainActivity.mapFragment.removeAreaCircles();
+                item.setChecked(false);
+            }else {
+                showAreaCircles = true;
+                MainActivity.mapFragment.setAreaCircles();
+                item.setChecked(true);
+            }
+            return true;
+        }else if(id == R.id.showHQs){
+            if(item.isChecked()) {
+                showAreaHQs = false;
+                item.setChecked(false);
+            }else {
+                showAreaHQs = true;
+                item.setChecked(true);
+            }
+            return true;
+        }else if(id == R.id.showRespawns){
+            if(item.isChecked()) {
+                showAreaRespawns = false;
+                item.setChecked(false);
+            }else {
+                showAreaRespawns = true;
+                item.setChecked(true);
+            }
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -392,6 +454,16 @@ public class MainActivity extends AppCompatActivity
             supportFloatingButton.show();
         }
     }
+
+    public static void connectToServer(String username, String password, String host, int port){
+        AsyncTask.execute(() -> MainActivity.nettyClient = new NettyClient(username, password, host, port));
+    }
+
+    public static void enableOrga(){
+        Log.i("Orga", "Enabling Orga Funktions");
+        addMarkerFloatingButton.show();
+    }
+
 
     private void turnGPSOn() {
         //TODO: Automatically turn GPS on

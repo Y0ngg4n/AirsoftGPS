@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,6 +33,23 @@
         android:layout_marginRight="16dp"
         android:layout_gravity="top|end"
         app:srcCompat="@drawable/ic_current_location" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/reloadfb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
+        android:layout_marginRight="16dp"
+        android:layout_gravity="top|end"
+        app:srcCompat="@drawable/ic_reload" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/setMarker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="300dp"
+        android:layout_marginRight="16dp"
+        android:layout_gravity="top|end"
+        app:srcCompat="@drawable/ic_setpin" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

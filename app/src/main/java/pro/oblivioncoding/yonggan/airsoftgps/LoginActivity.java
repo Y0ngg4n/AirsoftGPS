@@ -13,8 +13,12 @@ import netty.client.NettyClient;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private static final String HOST = "oblivioncoding.pro";
-    private static final int PORT = 12345;
+    public static final String HOST = "oblivioncoding.pro";
+    public static final int PORT = 12345;
+
+    public static String username;
+    public static String password;
+
 
     public static Consumer<Boolean> loginConsumer;
     final private LoginActivity instance = this;
@@ -35,7 +39,9 @@ public class LoginActivity extends AppCompatActivity {
                 }
             };
 
-            AsyncTask.execute(() -> MainActivity.nettyClient = new NettyClient(((TextView) findViewById(R.id.username)).getText().toString(), ((TextView) findViewById(R.id.password)).getText().toString(), HOST, PORT));
+            username = ((TextView) findViewById(R.id.username)).getText().toString();
+            password = ((TextView) findViewById(R.id.password)).getText().toString();
+            MainActivity.connectToServer(username, password, HOST, PORT);
             instance.runOnUiThread(() -> ((TextView) findViewById(R.id.errorLogin)).setText("Trying to connect..."));
         });
     }

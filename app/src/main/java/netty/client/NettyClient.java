@@ -8,6 +8,7 @@ import java.net.ConnectException;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.Epoll;
@@ -22,6 +23,7 @@ import netty.packet.PacketEncoder;
 import netty.packet.out.AuthPacketOUT;
 import netty.packet.out.ClientPositionOUT;
 import netty.packet.out.ClientStatusUpdateOUT;
+import netty.utils.Logger;
 import pro.oblivioncoding.yonggan.airsoftgps.LoginActivity;
 import pro.oblivioncoding.yonggan.airsoftgps.MainActivity;
 
@@ -94,6 +96,8 @@ public class NettyClient {
             }
         }
     }
+
+
 
     public static String getUsername() {
         return username;

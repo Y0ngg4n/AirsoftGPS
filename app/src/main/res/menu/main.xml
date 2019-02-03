@@ -1,9 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+    <group android:checkableBehavior="all">
+        <item
+            android:id="@+id/showAreaPolygon"
+            android:orderInCategory="1"
+            android:title="Show Team-Area Polygon"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/showAreaCircles"
+            android:orderInCategory="2"
+            android:title="Show Team-Area Circles"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/showHQs"
+            android:orderInCategory="3"
+            android:title="Show Team-HQs"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/showRespawns"
+            android:orderInCategory="3"
+            android:title="Show Team-Respawns"
+            app:showAsAction="never" />
+    </group>
+
 </menu>
