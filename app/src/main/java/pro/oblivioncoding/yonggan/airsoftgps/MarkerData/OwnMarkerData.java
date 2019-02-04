@@ -1,4 +1,4 @@
-package pro.oblivioncoding.yonggan.airsoftgps;
+package pro.oblivioncoding.yonggan.airsoftgps.MarkerData;
 
 
 public class OwnMarkerData {

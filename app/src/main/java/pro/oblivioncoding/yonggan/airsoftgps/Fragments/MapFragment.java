@@ -1,10 +1,7 @@
-package pro.oblivioncoding.yonggan.airsoftgps;
+package pro.oblivioncoding.yonggan.airsoftgps.Fragments;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -12,18 +9,8 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +19,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -47,13 +33,17 @@ import com.google.android.gms.maps.model.PolygonOptions;
 
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import netty.client.NettyClient;
+import pro.oblivioncoding.yonggan.airsoftgps.InfoWindowAdapter.CustomMarkerInfoWindowAdaper;
+import pro.oblivioncoding.yonggan.airsoftgps.InfoWindowAdapter.CustomOwnMarkerInfoWindowAdapter;
+import pro.oblivioncoding.yonggan.airsoftgps.MainActivity;
+import pro.oblivioncoding.yonggan.airsoftgps.MarkerData.MarkerData;
+import pro.oblivioncoding.yonggan.airsoftgps.MarkerData.OwnMarkerData;
+import pro.oblivioncoding.yonggan.airsoftgps.R;
 
 
 /**

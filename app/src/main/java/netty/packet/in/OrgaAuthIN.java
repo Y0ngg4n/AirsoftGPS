@@ -14,7 +14,7 @@ public class OrgaAuthIN implements PacketIN {
 
     @Override
     public void read(JsonObject jsonObject) {
-        jsonObject.get("successfull").getAsBoolean();
+        successfull = jsonObject.get("successfull").getAsBoolean();
     }
 
     @Override

@@ -4,10 +4,7 @@ import android.annotation.SuppressLint;
 import android.location.LocationManager;
 import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import java.sql.Timestamp;
 
@@ -19,8 +16,6 @@ import netty.packet.in.ClientAllPositionsIN;
 import netty.packet.in.OrgaAuthIN;
 import pro.oblivioncoding.yonggan.airsoftgps.LoginActivity;
 import pro.oblivioncoding.yonggan.airsoftgps.MainActivity;
-import pro.oblivioncoding.yonggan.airsoftgps.MapFragment;
-import pro.oblivioncoding.yonggan.airsoftgps.R;
 
 public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
 

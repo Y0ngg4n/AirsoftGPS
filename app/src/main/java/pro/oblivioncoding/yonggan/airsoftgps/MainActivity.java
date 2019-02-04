@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -15,14 +14,13 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -31,19 +29,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResolvableApiException;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnFailureListener;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 import netty.client.NettyClient;
 import netty.client.NetworkHandler;
+import pro.oblivioncoding.yonggan.airsoftgps.Fragments.AdvancedMapFragment;
+import pro.oblivioncoding.yonggan.airsoftgps.Fragments.MapFragment;
+import pro.oblivioncoding.yonggan.airsoftgps.Fragments.RadioFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MapFragment.OnFragmentInteractionListener, RadioFragment.OnFragmentInteractionListener, AdvancedMapFragment.OnFragmentInteractionListener {
@@ -67,6 +64,7 @@ public class MainActivity extends AppCompatActivity
 
     public static boolean showAreaPolygons = false, showAreaCircles = false, showAreaHQs = true, showAreaRespawns = true;
 
+    private static boolean enableOrgaFunctions = false;
     //Floating Buttons
     private static FloatingActionButton hitFloatingButton;
     private static FloatingActionButton supportFloatingButton;
@@ -94,6 +92,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         //############ Floating Buttons ####################
         hitFloatingButton = (FloatingActionButton) findViewById(R.id.hitfb);
@@ -159,7 +158,18 @@ public class MainActivity extends AppCompatActivity
         });
 
         addMarkerFloatingButton = (FloatingActionButton) findViewById(R.id.setMarker);
-        addMarkerFloatingButton.hide();
+        if (enableOrgaFunctions)
+            addMarkerFloatingButton.show();
+        else
+            addMarkerFloatingButton.hide();
+        addMarkerFloatingButton.setOnClickListener(view -> {
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getApplicationContext());
+            View dialogView = getLayoutInflater().inflate(R.layout.orga_add_marker_dialog, null);
+//            Spinner orgaAddMarkerType = (Spinner) findViewById(R.id.orgaaddmarkerselecttype);
+//            ArrayAdapter<CharSequence> orgaAddMarkerTypyArrayAdapter = ArrayAdapter.createFromResource(dialogView.getContext(), R.array.orga_add_marker_type, android.R.layout.simple_spinner_item);
+//            orgaAddMarkerTypyArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//            orgaAddMarkerType.setAdapter(orgaAddMarkerTypyArrayAdapter);
+        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -281,7 +291,7 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.showAreaPolygon) {
-            if(item.isChecked()) {
+            if (item.isChecked()) {
                 showAreaPolygons = false;
                 MainActivity.mapFragment.removeAreaPolygons();
                 item.setChecked(false);
@@ -291,31 +301,31 @@ public class MainActivity extends AppCompatActivity
                 item.setChecked(true);
             }
             return true;
-        }else if(id == R.id.showAreaCircles){
-            if(item.isChecked()) {
-                showAreaCircles= false;
+        } else if (id == R.id.showAreaCircles) {
+            if (item.isChecked()) {
+                showAreaCircles = false;
                 MainActivity.mapFragment.removeAreaCircles();
                 item.setChecked(false);
-            }else {
+            } else {
                 showAreaCircles = true;
                 MainActivity.mapFragment.setAreaCircles();
                 item.setChecked(true);
             }
             return true;
-        }else if(id == R.id.showHQs){
-            if(item.isChecked()) {
+        } else if (id == R.id.showHQs) {
+            if (item.isChecked()) {
                 showAreaHQs = false;
                 item.setChecked(false);
-            }else {
+            } else {
                 showAreaHQs = true;
                 item.setChecked(true);
             }
             return true;
-        }else if(id == R.id.showRespawns){
-            if(item.isChecked()) {
+        } else if (id == R.id.showRespawns) {
+            if (item.isChecked()) {
                 showAreaRespawns = false;
                 item.setChecked(false);
-            }else {
+            } else {
                 showAreaRespawns = true;
                 item.setChecked(true);
             }
@@ -455,13 +465,15 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public static void connectToServer(String username, String password, String host, int port){
+    public static void connectToServer(String username, String password, String host, int port) {
         AsyncTask.execute(() -> MainActivity.nettyClient = new NettyClient(username, password, host, port));
     }
 
-    public static void enableOrga(){
-        Log.i("Orga", "Enabling Orga Funktions");
-        addMarkerFloatingButton.show();
+    public static void enableOrga() {
+        if (addMarkerFloatingButton == null)
+            Log.i("Orga", "Enabling Orga Funktions");
+        else addMarkerFloatingButton.show();
+        enableOrgaFunctions = true;
     }
 
 

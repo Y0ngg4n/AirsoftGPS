@@ -10,4 +10,17 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_maps">Map</string>
+
+    <!--Orga Add Marker Type Strings-->
+    <string-array name="orga_add_marker_type">
+        <item>Tactical Marker</item>
+
+        <item>Mission Marker</item>
+
+        <item>Respawn Marker</item>
+
+        <item>HQ Marker</item>
+
+        <item>Flag Marker</item>
+    </string-array>
 </resources>

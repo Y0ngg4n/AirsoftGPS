@@ -1,4 +1,4 @@
-package pro.oblivioncoding.yonggan.airsoftgps;
+package pro.oblivioncoding.yonggan.airsoftgps.InfoWindowAdapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,6 +7,8 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
+
+import pro.oblivioncoding.yonggan.airsoftgps.R;
 
 public class CustomOwnMarkerInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
