@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Latitude:"
-            android:textSize="24sp" />
+            android:textSize="14sp" />
 
         <EditText
             android:id="@+id/orgaaddmarkerdialoglatitude"
@@ -23,14 +23,14 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:inputType="numberDecimal"
-            android:textSize="24sp"
+            android:textSize="14sp"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Longitude:"
-            android:textSize="24sp" />
+            android:textSize="14sp" />
 
         <EditText
             android:id="@+id/orgaaddmarkerdialoglongitude"
@@ -38,7 +38,50 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:inputType="numberDecimal"
-            android:textSize="24sp" />
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/orgaaddmarkerteamnamelabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Teamname:"
+            android:visibility="invisible"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/orgaaddmarkerteamname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:visibility="invisible"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/orgaaddmarkertitlelabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Title:" />
+
+        <EditText
+            android:id="@+id/orgaaddmarkertitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName" />
+
+        <TextView
+            android:id="@+id/orgaaddmarkerdescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Description:" />
+
+        <EditText
+            android:id="@+id/orgaaddmarkerdescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName" />
 
         <Button
             android:id="@+id/orgaaddmarkercurrentlocation"
@@ -47,11 +90,9 @@
             android:text="Current Location" />
 
         <Spinner
-            android:id="@+id/orgaaddmarkerselecttype"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:entries="@id/orgaaddmarkerselecttype">
-        </Spinner>
+            android:id="@+id/orgaaddmarkertype"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <Button
             android:id="@+id/orgaaddmarker"

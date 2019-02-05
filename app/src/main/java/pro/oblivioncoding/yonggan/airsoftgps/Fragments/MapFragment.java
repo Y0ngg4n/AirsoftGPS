@@ -88,6 +88,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private static ArrayList<Circle> teamAreaCircleList = new ArrayList<Circle>();
 
+    private static HashMap<Integer, Marker> HQmarker = new HashMap<Integer, Marker>();
+    private static HashMap<Integer, Marker> tacticalmarker = new HashMap<Integer, Marker>();
+    private static HashMap<Integer, Marker> missionmarker = new HashMap<Integer, Marker>();
+    private static HashMap<Integer, Marker> respawnmarker = new HashMap<Integer, Marker>();
+    private static HashMap<Integer, Marker> flagmarker = new HashMap<Integer, Marker>();
+
+
     public MapFragment() {
         // Required empty public constructor
     }
@@ -292,5 +299,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
         teamAreaCircleList.clear();
     }
+
+    public static void addTacticalMarker(double latitude, double longitude){
+
+    }
+
+    public static void addMissionMarker(double latitude, double longitude){
+
+    }
+
+    public static void addRespawnMarker(double latitude, double longitude){
+
+    }
+
+    public static void addHQMarker(double latitude, double longitude){
+    }
+
+    public static void addFlagMarker(double latitude, double longitude){
+
+    }
+
+
 
 }

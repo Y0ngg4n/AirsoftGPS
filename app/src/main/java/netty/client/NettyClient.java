@@ -18,6 +18,11 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldPrepender;
 import netty.packet.PacketDecoder;
 import netty.packet.PacketEncoder;
+import netty.packet.out.AddFlagMarkerOUT;
+import netty.packet.out.AddHQMarkerOUT;
+import netty.packet.out.AddMissionMarkerOUT;
+import netty.packet.out.AddRespawnMarkerOUT;
+import netty.packet.out.AddTacticalMarkerOUT;
 import netty.packet.out.AuthPacketOUT;
 import netty.packet.out.ClientPositionOUT;
 import netty.packet.out.ClientStatusUpdateOUT;
@@ -68,7 +73,7 @@ public class NettyClient {
 
             //noinspection ConstantConditions
             if (ex instanceof ConnectException) {
-                Log.i("NettyConnectionError", "Can´t connect to the Server: "+ ex.getMessage());
+                Log.i("NettyConnectionError", "Can´t connect to the Server: " + ex.getMessage());
                 LoginActivity.loginConsumer.accept(false);
             } else {
                 //TODO Implement Log Files
@@ -85,14 +90,49 @@ public class NettyClient {
         }
     }
 
-    public static void sendClientStatusPositionOUTPackage(boolean alive, boolean underfire, boolean mission, boolean support){
-        if(channel !=null){
-            if(channel.isWritable()){
+    public static void sendClientStatusPositionOUTPackage(boolean alive, boolean underfire, boolean mission, boolean support) {
+        if (channel != null) {
+            if (channel.isWritable()) {
                 channel.writeAndFlush(new ClientStatusUpdateOUT(username, alive, underfire, mission, support));
             }
         }
     }
 
+    public static void sendAddTacticalMarkerOUTPackage(double latitude, double longitude, String teamname, String title, String description) {
+        if (channel != null) {
+            if (channel.isWritable()) {
+                channel.writeAndFlush(new AddTacticalMarkerOUT(latitude, longitude, teamname, title, description, username));
+            }
+        }
+    }
+    public static void sendAddMissionMarkerOUTPackage(double latitude, double longitude, String title, String description) {
+        if (channel != null) {
+            if (channel.isWritable()) {
+                channel.writeAndFlush(new AddMissionMarkerOUT(latitude, longitude, title, description, username));
+            }
+        }
+    }
+    public static void sendAddRespawnMarkerOUTPackage(double latitude, double longitude, String title, String description) {
+        if (channel != null) {
+            if (channel.isWritable()) {
+                channel.writeAndFlush(new AddRespawnMarkerOUT(latitude, longitude, title, description, username));
+            }
+        }
+    }
+    public static void sendAddHQMarkerOUTPackage(double latitude, double longitude, String title, String description) {
+        if (channel != null) {
+            if (channel.isWritable()) {
+                channel.writeAndFlush(new AddHQMarkerOUT(latitude, longitude, title, description, username));
+            }
+        }
+    }
+    public static void sendAddFlagMarkerOUTPackage(double latitude, double longitude, String title, String description) {
+        if (channel != null) {
+            if (channel.isWritable()) {
+                channel.writeAndFlush(new AddFlagMarkerOUT(latitude, longitude, title, description, username));
+            }
+        }
+    }
 
 
     public static String getUsername() {

@@ -1,6 +1,7 @@
 package pro.oblivioncoding.yonggan.airsoftgps;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -27,9 +28,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
@@ -38,6 +41,7 @@ import java.util.TimerTask;
 
 import netty.client.NettyClient;
 import netty.client.NetworkHandler;
+import pro.oblivioncoding.yonggan.airsoftgps.Dialogs.OrgaAddMarkerDialogFragment;
 import pro.oblivioncoding.yonggan.airsoftgps.Fragments.AdvancedMapFragment;
 import pro.oblivioncoding.yonggan.airsoftgps.Fragments.MapFragment;
 import pro.oblivioncoding.yonggan.airsoftgps.Fragments.RadioFragment;
@@ -72,6 +76,8 @@ public class MainActivity extends AppCompatActivity
     private static FloatingActionButton missionFloatingButton;
     private static FloatingActionButton reloadFloatingButton;
     private static FloatingActionButton addMarkerFloatingButton;
+
+    public static boolean tacticalMarker =false, missionMarker = false, hqMarker = false, respawnMarker = false, flagMarker = false;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -163,12 +169,10 @@ public class MainActivity extends AppCompatActivity
         else
             addMarkerFloatingButton.hide();
         addMarkerFloatingButton.setOnClickListener(view -> {
-            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getApplicationContext());
-            View dialogView = getLayoutInflater().inflate(R.layout.orga_add_marker_dialog, null);
-//            Spinner orgaAddMarkerType = (Spinner) findViewById(R.id.orgaaddmarkerselecttype);
-//            ArrayAdapter<CharSequence> orgaAddMarkerTypyArrayAdapter = ArrayAdapter.createFromResource(dialogView.getContext(), R.array.orga_add_marker_type, android.R.layout.simple_spinner_item);
-//            orgaAddMarkerTypyArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//            orgaAddMarkerType.setAdapter(orgaAddMarkerTypyArrayAdapter);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            OrgaAddMarkerDialogFragment orgaAddMarkerDialogFragment = OrgaAddMarkerDialogFragment.newInstance("New Marker");
+
+            orgaAddMarkerDialogFragment.show(fragmentManager, "orga_add_marker_dialog");
         });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

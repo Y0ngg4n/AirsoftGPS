@@ -8,12 +8,21 @@ import com.google.gson.JsonElement;
 
 import java.sql.Timestamp;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import netty.packet.PacketIN;
+import netty.packet.in.AddFlagMarkerIN;
+import netty.packet.in.AddHQMarkerIN;
+import netty.packet.in.AddMissionMarkerIN;
+import netty.packet.in.AddRespawnMarkerIN;
+import netty.packet.in.AddTacticalMarkerIN;
 import netty.packet.in.LoginResponsePacketIN;
 import netty.packet.in.ClientAllPositionsIN;
 import netty.packet.in.OrgaAuthIN;
+import netty.packet.out.AddTacticalMarkerOUT;
+import netty.utils.Authenticated;
+import netty.utils.Logger;
 import pro.oblivioncoding.yonggan.airsoftgps.LoginActivity;
 import pro.oblivioncoding.yonggan.airsoftgps.MainActivity;
 
@@ -77,10 +86,30 @@ public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
             }
         }else if(packet instanceof OrgaAuthIN){
             final OrgaAuthIN orgaAuthIN = (OrgaAuthIN) packet;
-            if(orgaAuthIN.isSuccessfull()) {
+            if(orgaAuthIN.isSuccessful()) {
                 MainActivity.enableOrga();
                 Log.i("Orga", "Incoming OrgaAuth Packet");
+                MainActivity.tacticalMarker = orgaAuthIN.isTacticalMarker();
+                MainActivity.missionMarker = orgaAuthIN.isMissionMarker();
+                MainActivity.hqMarker = orgaAuthIN.isHqMarker();
+                MainActivity.respawnMarker = orgaAuthIN.isRespawnMarker();
+                MainActivity.flagMarker = orgaAuthIN.isFlagMarker();
             }
+        }else if (packet instanceof AddTacticalMarkerIN) {
+            AddTacticalMarkerIN addTacticalMarkerIN = (AddTacticalMarkerIN) packet;
+            Log.i("Pins","AddTacticalMarkerIN");
+        } else if (packet instanceof AddMissionMarkerIN) {
+            Log.i("Pins","AddMissionMarkerIN");
+            AddMissionMarkerIN addMissionMarkerIN = (AddMissionMarkerIN) packet;
+        } else if (packet instanceof AddRespawnMarkerIN) {
+            Log.i("Pins","AddRespawnMarkerIN");
+            AddRespawnMarkerIN addRespawnMarkerIN = (AddRespawnMarkerIN) packet;
+        } else if (packet instanceof AddHQMarkerIN) {
+            Log.i("Pins","AddHQMarkerIN");
+            AddHQMarkerIN addHQMarkerIN = (AddHQMarkerIN) packet;
+        } else if (packet instanceof AddFlagMarkerIN) {
+            Log.i("Pins","AddFlagMarkerIN");
+            AddFlagMarkerIN addFlagMarkerIN = (AddFlagMarkerIN) packet;
         }
     }
 
