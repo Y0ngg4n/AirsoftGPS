@@ -38,11 +38,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import netty.client.NettyClient;
+import pro.oblivioncoding.yonggan.airsoftgps.InfoWindowAdapter.CustomFlagMarkerWindowAdapter;
+import pro.oblivioncoding.yonggan.airsoftgps.InfoWindowAdapter.CustomHQMarkerWindowAdapter;
 import pro.oblivioncoding.yonggan.airsoftgps.InfoWindowAdapter.CustomMarkerInfoWindowAdaper;
+import pro.oblivioncoding.yonggan.airsoftgps.InfoWindowAdapter.CustomMissionMarkerWindowAdapter;
 import pro.oblivioncoding.yonggan.airsoftgps.InfoWindowAdapter.CustomOwnMarkerInfoWindowAdapter;
+import pro.oblivioncoding.yonggan.airsoftgps.InfoWindowAdapter.CustomRespawnMarkerWindowAdapter;
+import pro.oblivioncoding.yonggan.airsoftgps.InfoWindowAdapter.CustomTacticalMarkerWindowAdapter;
 import pro.oblivioncoding.yonggan.airsoftgps.MainActivity;
+import pro.oblivioncoding.yonggan.airsoftgps.MarkerData.FlagMarkerData;
+import pro.oblivioncoding.yonggan.airsoftgps.MarkerData.HQMakerData;
 import pro.oblivioncoding.yonggan.airsoftgps.MarkerData.MarkerData;
+import pro.oblivioncoding.yonggan.airsoftgps.MarkerData.MissionMarkerData;
 import pro.oblivioncoding.yonggan.airsoftgps.MarkerData.OwnMarkerData;
+import pro.oblivioncoding.yonggan.airsoftgps.MarkerData.RespawnMarkerData;
+import pro.oblivioncoding.yonggan.airsoftgps.MarkerData.TacticalMarkerData;
 import pro.oblivioncoding.yonggan.airsoftgps.R;
 
 
@@ -88,11 +98,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private static ArrayList<Circle> teamAreaCircleList = new ArrayList<Circle>();
 
-    private static HashMap<Integer, Marker> HQmarker = new HashMap<Integer, Marker>();
-    private static HashMap<Integer, Marker> tacticalmarker = new HashMap<Integer, Marker>();
-    private static HashMap<Integer, Marker> missionmarker = new HashMap<Integer, Marker>();
-    private static HashMap<Integer, Marker> respawnmarker = new HashMap<Integer, Marker>();
-    private static HashMap<Integer, Marker> flagmarker = new HashMap<Integer, Marker>();
+    private static HashMap<Marker, HQMakerData> HQmarker = new HashMap();
+    private static HashMap<Marker, TacticalMarkerData> tacticalmarker = new HashMap();
+    private static HashMap<Marker, MissionMarkerData> missionmarker = new HashMap();
+    private static HashMap<Marker, RespawnMarkerData> respawnmarker = new HashMap();
+    private static HashMap<Marker, FlagMarkerData> flagmarker = new HashMap();
 
 
     public MapFragment() {
@@ -164,11 +174,27 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             if (marker.equals(ownMarker)) {
                 Log.i("InfoWindow", "Own");
                 googleMap.setInfoWindowAdapter(new CustomOwnMarkerInfoWindowAdapter(getContext(), ownMarkerData.getTitle(), ownMarkerData.getLatitude(), ownMarkerData.getLongitude()));
-            } else {
+            } else if (markerData.containsKey(marker)) {
                 MarkerData markerData0 = markerData.get(marker);
                 Log.i("InfoWindow", "User");
                 googleMap.setInfoWindowAdapter(new CustomMarkerInfoWindowAdaper(getContext(), markerData0.getTitle(), markerData0.getLatitude(), markerData0.getLongitude(), markerData0.getTimestamp(), markerData0.getTeamname(), markerData0.isAlive(), markerData0.isUnderfire(), markerData0.isMission(), markerData0.isSupport()));
+            } else if (tacticalmarker.containsKey(marker)) {
+                TacticalMarkerData tacticalMarkerData = tacticalmarker.get(marker);
+                googleMap.setInfoWindowAdapter(new CustomTacticalMarkerWindowAdapter(getContext(), tacticalMarkerData.getLatitude(), tacticalMarkerData.getLongitude(), tacticalMarkerData.getTeamname(), tacticalMarkerData.getTitle(), tacticalMarkerData.getDescription(), tacticalMarkerData.getUsername()));
+            } else if (missionmarker.containsKey(marker)) {
+                MissionMarkerData missionMarkerData = missionmarker.get(marker);
+                googleMap.setInfoWindowAdapter(new CustomMissionMarkerWindowAdapter(getContext(), missionMarkerData.getLatitude(), missionMarkerData.getLongitude(), missionMarkerData.getTitle(), missionMarkerData.getDescription(), missionMarkerData.getUsername()));
+            } else if (respawnmarker.containsKey(marker)) {
+                RespawnMarkerData respawnMarkerData = respawnmarker.get(marker);
+                googleMap.setInfoWindowAdapter(new CustomRespawnMarkerWindowAdapter(getContext(), respawnMarkerData.getLatitude(), respawnMarkerData.getLongitude(), respawnMarkerData.getTitle(), respawnMarkerData.getDescription(), respawnMarkerData.getUsername()));
+            } else if (HQmarker.containsKey(marker)) {
+                HQMakerData hqMakerData = HQmarker.get(marker);
+                googleMap.setInfoWindowAdapter(new CustomHQMarkerWindowAdapter(getContext(), hqMakerData.getLatitude(), hqMakerData.getLongitude(), hqMakerData.getTitle(), hqMakerData.getDescription(), hqMakerData.getUsername()));
+            } else if (flagmarker.containsKey(marker)) {
+                FlagMarkerData flagMarkerData = flagmarker.get(marker);
+                googleMap.setInfoWindowAdapter(new CustomFlagMarkerWindowAdapter(getContext(), flagMarkerData.getLatitude(), flagMarkerData.getLongitude(), flagMarkerData.getTitle(), flagMarkerData.getDescription(), flagMarkerData.getUsername()));
             }
+
             marker.showInfoWindow();
             return true;
         });
@@ -269,9 +295,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    public void setAreaPolygons(){
+    public void setOrgaMarkerIcon(Marker marker, MarkerData markerData) {
+
+    }
+
+    public void setAreaPolygons() {
         PolygonOptions polygonOptions = new PolygonOptions();
-        for(Marker marker : userMarker.values()){
+        for (Marker marker : userMarker.values()) {
             polygonOptions.add(marker.getPosition());
         }
         polygonOptions.fillColor(Color.BLUE);
@@ -279,46 +309,76 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         teamAreaPolygon = googleMap.addPolygon(polygonOptions);
     }
 
-    public void removeAreaPolygons(){
-        if(teamAreaPolygon != null){
+    public void removeAreaPolygons() {
+        if (teamAreaPolygon != null) {
             teamAreaPolygon.remove();
         }
     }
 
-    public void setAreaCircles(){
-        for(Marker marker : userMarker.values()){
+    public void setAreaCircles() {
+        for (Marker marker : userMarker.values()) {
             teamAreaCircleList.add(googleMap.addCircle(new CircleOptions().center(marker.getPosition()).radius(100).fillColor(Color.GREEN).strokeColor(Color.GREEN)));
         }
     }
 
-    public void removeAreaCircles(){
-        for(Circle circle : teamAreaCircleList){
-            if(circle != null){
+    public void removeAreaCircles() {
+        for (Circle circle : teamAreaCircleList) {
+            if (circle != null) {
                 circle.remove();
             }
         }
         teamAreaCircleList.clear();
     }
 
-    public static void addTacticalMarker(double latitude, double longitude){
-
+    public void addTacticalMarker(double latitude, double longitude, String title, String description, String teamname, String username) {
+        if (googleMap != null) {
+            getActivity().runOnUiThread(() -> {
+                tacticalmarker.put(googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))), new TacticalMarkerData(latitude, longitude, title, teamname, description, username));
+                setCamera(new LatLng(latitude, longitude));
+                Log.i("Pin", "Setting Tactical Marker");
+            });
+        }
     }
 
-    public static void addMissionMarker(double latitude, double longitude){
-
+    public void addMissionMarker(double latitude, double longitude, String title, String description, String username) {
+        if (googleMap != null) {
+            getActivity().runOnUiThread(() -> {
+                missionmarker.put(googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))), new MissionMarkerData(latitude, longitude, title, description, username));
+                setCamera(new LatLng(latitude, longitude));
+                Log.i("Pin", "Setting Mission Marker");
+            });
+        }
     }
 
-    public static void addRespawnMarker(double latitude, double longitude){
-
+    public void addRespawnMarker(double latitude, double longitude, String title, String description, String username) {
+        if (googleMap != null) {
+            getActivity().runOnUiThread(() -> {
+                respawnmarker.put(googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))), new RespawnMarkerData(latitude, longitude, title, description, username));
+                setCamera(new LatLng(latitude, longitude));
+                Log.i("Pin", "Setting Respawn Marker");
+            });
+        }
     }
 
-    public static void addHQMarker(double latitude, double longitude){
+    public void addHQMarker(double latitude, double longitude, String title, String description, String username) {
+        if (googleMap != null) {
+            getActivity().runOnUiThread(() -> {
+                HQmarker.put(googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))), new HQMakerData(latitude, longitude, title, description, username));
+                setCamera(new LatLng(latitude, longitude));
+                Log.i("Pin", "Setting HQ Marker");
+            });
+        }
     }
 
-    public static void addFlagMarker(double latitude, double longitude){
-
+    public void addFlagMarker(double latitude, double longitude, String title, String description, String username) {
+        if (googleMap != null) {
+            getActivity().runOnUiThread(() -> {
+                flagmarker.put(googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))), new FlagMarkerData(latitude, longitude, title, description, username));
+                setCamera(new LatLng(latitude, longitude));
+                Log.i("Pin", "Setting Flag Marker");
+            });
+        }
     }
-
 
 
 }

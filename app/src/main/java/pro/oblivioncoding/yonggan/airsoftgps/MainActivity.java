@@ -2,6 +2,8 @@ package pro.oblivioncoding.yonggan.airsoftgps;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,6 +14,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -19,6 +22,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -50,7 +54,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MapFragment.OnFragmentInteractionListener, RadioFragment.OnFragmentInteractionListener, AdvancedMapFragment.OnFragmentInteractionListener {
 
     public static LocationManager locationManager;
-    private static LocationListener locationListener;
+    public static LocationListener locationListener;
 
     public static MapFragment mapFragment;
     private static RadioFragment radioFragment;
@@ -77,7 +81,9 @@ public class MainActivity extends AppCompatActivity
     private static FloatingActionButton reloadFloatingButton;
     private static FloatingActionButton addMarkerFloatingButton;
 
-    public static boolean tacticalMarker =false, missionMarker = false, hqMarker = false, respawnMarker = false, flagMarker = false;
+    public static boolean tacticalMarker = false, missionMarker = false, hqMarker = false, respawnMarker = false, flagMarker = false;
+
+    public GoogleService googleService = new GoogleService();
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -190,10 +196,7 @@ public class MainActivity extends AppCompatActivity
 
         turnGPSOn();
 
-        locationManager = (LocationManager) this.
-
-                getSystemService(Context.LOCATION_SERVICE);
-
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         //Set Accuracy to best
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
@@ -207,53 +210,16 @@ public class MainActivity extends AppCompatActivity
             mapFragment.setOwnMarker(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
         }
 
-        locationListener = new
-
-                LocationListener() {
-                    @Override
-                    public void onLocationChanged(Location location) {
-                        Log.i("LocationBla", "LocationChanged to " + location);
-
-                        if (mapFragment != null) {
-                            mapFragment.setOwnMarker(location);
-                        }
-
-                        if (nettyClient != null && NetworkHandler.loggedIN) {
-                            nettyClient.sendClientPositionOUTPackage(location.getLatitude(), location.getLongitude());
-                        }
-                    }
-
-                    @Override
-                    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                    }
-
-                    @Override
-                    public void onProviderEnabled(String provider) {
-
-                    }
-
-                    @Override
-                    public void onProviderDisabled(String provider) {
-
-                    }
-                }
-        ;
+        locationListener = googleService;
 
         requestLocation();
 
         //Create new Object of Fragment
-        mapFragment = new
+        mapFragment = new MapFragment();
 
-                MapFragment();
+        advancedMapFragment = new AdvancedMapFragment();
 
-        advancedMapFragment = new
-
-                AdvancedMapFragment();
-
-        radioFragment = new
-
-                RadioFragment();
+        radioFragment = new RadioFragment();
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -380,14 +346,17 @@ public class MainActivity extends AppCompatActivity
         return locationManager;
     }
 
-    private void requestLocation() {
+    public void requestLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             requestLocationPermissions();
             return;
         }
-        if (locationManager != null)
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, locationListener);
+        if (locationManager != null) {
+//            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, locationListener);
+            Intent intent = new Intent(this, googleService.getClass());
+            startService(intent);
+        }
     }
 
     private void requestLocationPermissions() {

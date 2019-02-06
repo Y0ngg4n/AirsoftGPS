@@ -27,6 +27,7 @@ public enum PacketRegistry {
     }
 
     public static Class<? extends PacketIN> getPacket(int id) {
+        Log.i("blup", String.valueOf(id));
         for (PacketRegistry value : values()) {
             try {
                 if (value.getClazz().newInstance().getId() == id) {

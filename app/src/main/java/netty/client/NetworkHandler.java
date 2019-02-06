@@ -74,19 +74,19 @@ public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
                         jsonElement.getAsJsonObject().get("mission").getAsBoolean(),
                         jsonElement.getAsJsonObject().get("support").getAsBoolean()
                 );
-                if(MainActivity.showAreaPolygons){
+                if (MainActivity.showAreaPolygons) {
                     MainActivity.mapFragment.removeAreaPolygons();
                     MainActivity.mapFragment.setAreaPolygons();
                 }
 
-                if(MainActivity.showAreaCircles){
+                if (MainActivity.showAreaCircles) {
                     MainActivity.mapFragment.removeAreaCircles();
                     MainActivity.mapFragment.setAreaCircles();
                 }
             }
-        }else if(packet instanceof OrgaAuthIN){
+        } else if (packet instanceof OrgaAuthIN) {
             final OrgaAuthIN orgaAuthIN = (OrgaAuthIN) packet;
-            if(orgaAuthIN.isSuccessful()) {
+            if (orgaAuthIN.isSuccessful()) {
                 MainActivity.enableOrga();
                 Log.i("Orga", "Incoming OrgaAuth Packet");
                 MainActivity.tacticalMarker = orgaAuthIN.isTacticalMarker();
@@ -95,21 +95,26 @@ public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
                 MainActivity.respawnMarker = orgaAuthIN.isRespawnMarker();
                 MainActivity.flagMarker = orgaAuthIN.isFlagMarker();
             }
-        }else if (packet instanceof AddTacticalMarkerIN) {
+        } else if (packet instanceof AddTacticalMarkerIN) {
             AddTacticalMarkerIN addTacticalMarkerIN = (AddTacticalMarkerIN) packet;
-            Log.i("Pins","AddTacticalMarkerIN");
+            Log.i("Pins", String.valueOf(addTacticalMarkerIN.getJsonArray()));
+//            MainActivity.getMapFragment().addTacticalMarker(addTacticalMarkerIN.getLatitude(), addTacticalMarkerIN.getLongitude(), addTacticalMarkerIN.getTitle(), addTacticalMarkerIN.getDescription(), addTacticalMarkerIN.getTeamname(), addTacticalMarkerIN.getUsername());
         } else if (packet instanceof AddMissionMarkerIN) {
-            Log.i("Pins","AddMissionMarkerIN");
+            Log.i("Pins", "AddMissionMarkerIN");
             AddMissionMarkerIN addMissionMarkerIN = (AddMissionMarkerIN) packet;
+            MainActivity.getMapFragment().addMissionMarker(addMissionMarkerIN.getLatitude(),addMissionMarkerIN.getLongitude(), addMissionMarkerIN.getTitle(), addMissionMarkerIN.getDescription(), addMissionMarkerIN.getUsername());
         } else if (packet instanceof AddRespawnMarkerIN) {
-            Log.i("Pins","AddRespawnMarkerIN");
+            Log.i("Pins", "AddRespawnMarkerIN");
             AddRespawnMarkerIN addRespawnMarkerIN = (AddRespawnMarkerIN) packet;
+            MainActivity.getMapFragment().addRespawnMarker(addRespawnMarkerIN.getLatitude(), addRespawnMarkerIN.getLongitude(), addRespawnMarkerIN.getTitle(), addRespawnMarkerIN.getDescription(), addRespawnMarkerIN.getUsername());
         } else if (packet instanceof AddHQMarkerIN) {
-            Log.i("Pins","AddHQMarkerIN");
+            Log.i("Pins", "AddHQMarkerIN");
             AddHQMarkerIN addHQMarkerIN = (AddHQMarkerIN) packet;
+            MainActivity.getMapFragment().addHQMarker(addHQMarkerIN.getLatitude(), addHQMarkerIN.getLongitude(), addHQMarkerIN.getTitle(), addHQMarkerIN.getDescription(), addHQMarkerIN.getUsername());
         } else if (packet instanceof AddFlagMarkerIN) {
-            Log.i("Pins","AddFlagMarkerIN");
+            Log.i("Pins", "AddFlagMarkerIN");
             AddFlagMarkerIN addFlagMarkerIN = (AddFlagMarkerIN) packet;
+            MainActivity.getMapFragment().addFlagMarker(addFlagMarkerIN.getLatitude(), addFlagMarkerIN.getLongitude(), addFlagMarkerIN.getTitle(),addFlagMarkerIN.getDescription(), addFlagMarkerIN.getUsername());
         }
     }
 

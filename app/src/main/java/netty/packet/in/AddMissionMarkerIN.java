@@ -24,9 +24,7 @@ public class AddMissionMarkerIN implements PacketIN {
         return 8;
     }
 
-    public double getLatitude() {
-        return latitude;
-    }
+    public double getLatitude() { return latitude; }
 
     public double getLongitude() {
         return longitude;
