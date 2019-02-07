@@ -97,8 +97,15 @@ public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
             }
         } else if (packet instanceof AddTacticalMarkerIN) {
             AddTacticalMarkerIN addTacticalMarkerIN = (AddTacticalMarkerIN) packet;
-            Log.i("Pins", String.valueOf(addTacticalMarkerIN.getJsonArray()));
-//            MainActivity.getMapFragment().addTacticalMarker(addTacticalMarkerIN.getLatitude(), addTacticalMarkerIN.getLongitude(), addTacticalMarkerIN.getTitle(), addTacticalMarkerIN.getDescription(), addTacticalMarkerIN.getTeamname(), addTacticalMarkerIN.getUsername());
+            Log.i("Pins", String.valueOf(addTacticalMarkerIN.getId()));
+                MainActivity.getMapFragment().addTacticalMarker(
+                        addTacticalMarkerIN.getLatitude(),
+                        addTacticalMarkerIN.getLongitude(),
+                        addTacticalMarkerIN.getId(),
+                        addTacticalMarkerIN.getTitle(),
+                        addTacticalMarkerIN.getDescription(),
+                        addTacticalMarkerIN.getTeamname(),
+                        addTacticalMarkerIN.getUsername());
         } else if (packet instanceof AddMissionMarkerIN) {
             Log.i("Pins", "AddMissionMarkerIN");
             AddMissionMarkerIN addMissionMarkerIN = (AddMissionMarkerIN) packet;

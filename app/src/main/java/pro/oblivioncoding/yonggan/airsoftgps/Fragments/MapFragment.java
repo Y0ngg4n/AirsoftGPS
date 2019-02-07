@@ -99,7 +99,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private static ArrayList<Circle> teamAreaCircleList = new ArrayList<Circle>();
 
     private static HashMap<Marker, HQMakerData> HQmarker = new HashMap();
-    private static HashMap<Marker, TacticalMarkerData> tacticalmarker = new HashMap();
+    public static HashMap<Marker, TacticalMarkerData> tacticalmarker = new HashMap();
     private static HashMap<Marker, MissionMarkerData> missionmarker = new HashMap();
     private static HashMap<Marker, RespawnMarkerData> respawnmarker = new HashMap();
     private static HashMap<Marker, FlagMarkerData> flagmarker = new HashMap();
@@ -330,11 +330,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         teamAreaCircleList.clear();
     }
 
-    public void addTacticalMarker(double latitude, double longitude, String title, String description, String teamname, String username) {
+    public void addTacticalMarker(double latitude, double longitude, int id, String title, String description, String teamname, String username) {
         if (googleMap != null) {
             getActivity().runOnUiThread(() -> {
-                tacticalmarker.put(googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))), new TacticalMarkerData(latitude, longitude, title, teamname, description, username));
-                setCamera(new LatLng(latitude, longitude));
+                tacticalmarker.put(googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))), new TacticalMarkerData(latitude, longitude, id, title, teamname, description, username));
                 Log.i("Pin", "Setting Tactical Marker");
             });
         }
@@ -344,7 +343,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         if (googleMap != null) {
             getActivity().runOnUiThread(() -> {
                 missionmarker.put(googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))), new MissionMarkerData(latitude, longitude, title, description, username));
-                setCamera(new LatLng(latitude, longitude));
                 Log.i("Pin", "Setting Mission Marker");
             });
         }
@@ -354,7 +352,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         if (googleMap != null) {
             getActivity().runOnUiThread(() -> {
                 respawnmarker.put(googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))), new RespawnMarkerData(latitude, longitude, title, description, username));
-                setCamera(new LatLng(latitude, longitude));
                 Log.i("Pin", "Setting Respawn Marker");
             });
         }
@@ -364,7 +361,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         if (googleMap != null) {
             getActivity().runOnUiThread(() -> {
                 HQmarker.put(googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))), new HQMakerData(latitude, longitude, title, description, username));
-                setCamera(new LatLng(latitude, longitude));
                 Log.i("Pin", "Setting HQ Marker");
             });
         }
@@ -374,7 +370,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         if (googleMap != null) {
             getActivity().runOnUiThread(() -> {
                 flagmarker.put(googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))), new FlagMarkerData(latitude, longitude, title, description, username));
-                setCamera(new LatLng(latitude, longitude));
                 Log.i("Pin", "Setting Flag Marker");
             });
         }

@@ -2,11 +2,13 @@ package pro.oblivioncoding.yonggan.airsoftgps.MarkerData;
 
 public class TacticalMarkerData {
 
+    private int id;
     private double latitude, longitude;
 
     private String teamname, title, description, username;
 
-    public TacticalMarkerData(double latitude, double longitude, String title, String teamname, String description, String username) {
+    public TacticalMarkerData(double latitude, double longitude, int id, String title, String teamname, String description, String username) {
+        this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
         this.username = username;
@@ -33,6 +35,10 @@ public class TacticalMarkerData {
 
     public String getDescription() {
         return description;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getUsername() {

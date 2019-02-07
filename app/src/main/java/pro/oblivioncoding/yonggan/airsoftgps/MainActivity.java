@@ -155,8 +155,10 @@ public class MainActivity extends AppCompatActivity
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    reloadFloatingButton.setEnabled(true);
-                    reloadFloatingButton.setImageResource(R.drawable.ic_reloading);
+                    runOnUiThread(()->{
+                        reloadFloatingButton.setEnabled(true);
+                        reloadFloatingButton.setImageResource(R.drawable.ic_reloading);
+                    });
                 }
             }, 60000L);
         });
