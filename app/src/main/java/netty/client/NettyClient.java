@@ -18,14 +18,16 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldPrepender;
 import netty.packet.PacketDecoder;
 import netty.packet.PacketEncoder;
-import netty.packet.out.AddFlagMarkerOUT;
-import netty.packet.out.AddHQMarkerOUT;
-import netty.packet.out.AddMissionMarkerOUT;
-import netty.packet.out.AddRespawnMarkerOUT;
-import netty.packet.out.AddTacticalMarkerOUT;
+import netty.packet.out.AddMarker.AddFlagMarkerOUT;
+import netty.packet.out.AddMarker.AddHQMarkerOUT;
+import netty.packet.out.AddMarker.AddMissionMarkerOUT;
+import netty.packet.out.AddMarker.AddRespawnMarkerOUT;
+import netty.packet.out.AddMarker.AddTacticalMarkerOUT;
 import netty.packet.out.AuthPacketOUT;
 import netty.packet.out.ClientPositionOUT;
 import netty.packet.out.ClientStatusUpdateOUT;
+import netty.packet.out.RefreshPacketOUT;
+import netty.packet.out.RemoveMarker.RemoveTacticalMarkerOUT;
 import pro.oblivioncoding.yonggan.airsoftgps.LoginActivity;
 
 public class NettyClient {
@@ -134,6 +136,22 @@ public class NettyClient {
         }
     }
 
+    public static void sendRemoveTacticalMarkerOUTPackage(int markerID){
+        if(channel != null){
+            if(channel.isWritable()){
+                RemoveTacticalMarkerOUT removeTacticalMarkerOUT = new RemoveTacticalMarkerOUT(markerID, username);
+                channel.writeAndFlush(removeTacticalMarkerOUT);
+            }
+        }
+    }
+
+    public static void sendRefreshPacketOUT(){
+        if(channel != null){
+            if(channel.isWritable()){
+                channel.writeAndFlush(new RefreshPacketOUT());
+            }
+        }
+    }
 
     public static String getUsername() {
         return username;

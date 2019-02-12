@@ -29,15 +29,15 @@
         android:id="@+id/currentlocationfb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="76dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginRight="80dp"
         android:layout_gravity="top|end"
         app:srcCompat="@drawable/ic_current_location" />
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/reloadfb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="130dp"
         android:layout_marginRight="16dp"
         android:layout_gravity="top|end"
         app:srcCompat="@drawable/ic_reload" />
@@ -45,10 +45,18 @@
         android:id="@+id/setMarker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="225dp"
+        android:layout_marginTop="200dp"
         android:layout_marginRight="16dp"
         android:layout_gravity="top|end"
         app:srcCompat="@drawable/ic_setpin" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/removeMarker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="270dp"
+        android:layout_marginRight="16dp"
+        android:layout_gravity="top|end"
+        app:srcCompat="@drawable/ic_remove_marker" />
 
     <LinearLayout
         android:layout_width="wrap_content"

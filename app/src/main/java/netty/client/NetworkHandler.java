@@ -8,7 +8,6 @@ import com.google.gson.JsonElement;
 
 import java.sql.Timestamp;
 
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import netty.packet.PacketIN;
@@ -20,9 +19,6 @@ import netty.packet.in.AddTacticalMarkerIN;
 import netty.packet.in.LoginResponsePacketIN;
 import netty.packet.in.ClientAllPositionsIN;
 import netty.packet.in.OrgaAuthIN;
-import netty.packet.out.AddTacticalMarkerOUT;
-import netty.utils.Authenticated;
-import netty.utils.Logger;
 import pro.oblivioncoding.yonggan.airsoftgps.LoginActivity;
 import pro.oblivioncoding.yonggan.airsoftgps.MainActivity;
 
@@ -101,7 +97,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
                 MainActivity.getMapFragment().addTacticalMarker(
                         addTacticalMarkerIN.getLatitude(),
                         addTacticalMarkerIN.getLongitude(),
-                        addTacticalMarkerIN.getId(),
+                        addTacticalMarkerIN.getMarkerID(),
                         addTacticalMarkerIN.getTitle(),
                         addTacticalMarkerIN.getDescription(),
                         addTacticalMarkerIN.getTeamname(),

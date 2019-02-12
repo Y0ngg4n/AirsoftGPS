@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity
 
     public static boolean showAreaPolygons = false, showAreaCircles = false, showAreaHQs = true, showAreaRespawns = true;
 
-    private static boolean enableOrgaFunctions = false;
+    public static boolean enableOrgaFunctions = false;
     //Floating Buttons
     private static FloatingActionButton hitFloatingButton;
     private static FloatingActionButton supportFloatingButton;
@@ -80,6 +80,8 @@ public class MainActivity extends AppCompatActivity
     private static FloatingActionButton missionFloatingButton;
     private static FloatingActionButton reloadFloatingButton;
     private static FloatingActionButton addMarkerFloatingButton;
+
+    public static FloatingActionButton removeMarkerFloatingButton;
 
     public static boolean tacticalMarker = false, missionMarker = false, hqMarker = false, respawnMarker = false, flagMarker = false;
 
@@ -148,14 +150,11 @@ public class MainActivity extends AppCompatActivity
         reloadFloatingButton.setOnClickListener(view -> {
             reloadFloatingButton.setEnabled(false);
             reloadFloatingButton.setImageResource(R.drawable.ic_reloading);
-            if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                MainActivity.nettyClient.sendClientPositionOUTPackage(MainActivity.locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude(), MainActivity.locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude());
-                MainActivity.nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
-            }
+            MainActivity.nettyClient.sendRefreshPacketOUT();
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    runOnUiThread(()->{
+                    runOnUiThread(() -> {
                         reloadFloatingButton.setEnabled(true);
                         reloadFloatingButton.setImageResource(R.drawable.ic_reloading);
                     });
@@ -182,6 +181,9 @@ public class MainActivity extends AppCompatActivity
 
             orgaAddMarkerDialogFragment.show(fragmentManager, "orga_add_marker_dialog");
         });
+
+        removeMarkerFloatingButton = (FloatingActionButton) findViewById(R.id.removeMarker);
+        removeMarkerFloatingButton.hide();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(

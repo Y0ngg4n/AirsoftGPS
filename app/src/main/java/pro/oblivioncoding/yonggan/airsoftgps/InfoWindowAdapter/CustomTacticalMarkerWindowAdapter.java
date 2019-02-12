@@ -3,11 +3,13 @@ package pro.oblivioncoding.yonggan.airsoftgps.InfoWindowAdapter;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
+import pro.oblivioncoding.yonggan.airsoftgps.MainActivity;
 import pro.oblivioncoding.yonggan.airsoftgps.R;
 
 public class CustomTacticalMarkerWindowAdapter implements GoogleMap.InfoWindowAdapter {
@@ -18,6 +20,7 @@ public class CustomTacticalMarkerWindowAdapter implements GoogleMap.InfoWindowAd
     private double latitude, longitude;
 
     private String teamname,title, description, username;
+
 
     public CustomTacticalMarkerWindowAdapter(Context context, double latitude, double longitude, String teamname, String title, String description, String username) {
         mContext = context;

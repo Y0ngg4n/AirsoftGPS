@@ -104,7 +104,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private static HashMap<Marker, RespawnMarkerData> respawnmarker = new HashMap();
     private static HashMap<Marker, FlagMarkerData> flagmarker = new HashMap();
 
-
     public MapFragment() {
         // Required empty public constructor
     }
@@ -169,6 +168,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         setOwnMarker(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
 
+        googleMap.setMyLocationEnabled(true);
+        googleMap.getUiSettings().setCompassEnabled(true);
         googleMap.setOnMarkerClickListener(marker -> {
             Log.i("Marker", "Marker: " + marker);
             if (marker.equals(ownMarker)) {
@@ -181,6 +182,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             } else if (tacticalmarker.containsKey(marker)) {
                 TacticalMarkerData tacticalMarkerData = tacticalmarker.get(marker);
                 googleMap.setInfoWindowAdapter(new CustomTacticalMarkerWindowAdapter(getContext(), tacticalMarkerData.getLatitude(), tacticalMarkerData.getLongitude(), tacticalMarkerData.getTeamname(), tacticalMarkerData.getTitle(), tacticalMarkerData.getDescription(), tacticalMarkerData.getUsername()));
+                if (MainActivity.enableOrgaFunctions && MainActivity.tacticalMarker) {
+                    MainActivity.removeMarkerFloatingButton.setOnClickListener(v -> {
+                        Log.i("Tactical Marker", "Remove Tactical Marker " + marker);
+                        NettyClient.sendRemoveTacticalMarkerOUTPackage(tacticalmarker.get(marker).getId());
+                        marker.remove();
+                        tacticalmarker.remove(marker);
+                        MainActivity.removeMarkerFloatingButton.hide();
+                    });
+                    MainActivity.removeMarkerFloatingButton.show();
+                }
             } else if (missionmarker.containsKey(marker)) {
                 MissionMarkerData missionMarkerData = missionmarker.get(marker);
                 googleMap.setInfoWindowAdapter(new CustomMissionMarkerWindowAdapter(getContext(), missionMarkerData.getLatitude(), missionMarkerData.getLongitude(), missionMarkerData.getTitle(), missionMarkerData.getDescription(), missionMarkerData.getUsername()));
@@ -374,6 +385,4 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             });
         }
     }
-
-
 }

@@ -1,16 +1,16 @@
-package netty.packet.out;
+package netty.packet.out.AddMarker;
 
 import com.google.gson.JsonObject;
 
 import netty.packet.PacketOUT;
 
-public class AddMissionMarkerOUT implements PacketOUT {
+public class AddFlagMarkerOUT implements PacketOUT {
 
     private double latitude, longitude;
 
     private String title, description, username;
 
-    public AddMissionMarkerOUT(double latitude, double longitude, String title, String description, String username) {
+    public AddFlagMarkerOUT(double latitude, double longitude, String title, String description, String username) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.title = title;
@@ -29,7 +29,7 @@ public class AddMissionMarkerOUT implements PacketOUT {
 
     @Override
     public int getId() {
-        return 8;
+        return 11;
     }
 
 
