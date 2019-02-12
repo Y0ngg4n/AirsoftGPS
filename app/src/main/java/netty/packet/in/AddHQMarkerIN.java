@@ -10,6 +10,8 @@ public class AddHQMarkerIN implements PacketIN {
 
     private String title, description, username;
 
+    private boolean own;
+
     @Override
     public void read(JsonObject jsonObject) {
         latitude = jsonObject.get("latitude").getAsDouble();
@@ -17,6 +19,7 @@ public class AddHQMarkerIN implements PacketIN {
         title = jsonObject.get("title").getAsString();
         description = jsonObject.get("description").getAsString();
         username = jsonObject.get("username").getAsString();
+        own = jsonObject.get("own").getAsBoolean();
     }
 
     @Override
@@ -42,5 +45,9 @@ public class AddHQMarkerIN implements PacketIN {
 
     public String getUsername() {
         return username;
+    }
+
+    public boolean isOwn() {
+        return own;
     }
 }
