@@ -83,6 +83,12 @@
             android:ems="10"
             android:inputType="textPersonName" />
 
+        <Switch
+            android:id="@+id/orgaaddmarkerown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Owned" />
+
         <Button
             android:id="@+id/orgaaddmarkercurrentlocation"
             android:layout_width="wrap_content"

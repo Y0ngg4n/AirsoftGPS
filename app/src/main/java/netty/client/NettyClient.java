@@ -114,21 +114,21 @@ public class NettyClient {
             }
         }
     }
-    public static void sendAddRespawnMarkerOUTPackage(double latitude, double longitude, String title, String description) {
+    public static void sendAddRespawnMarkerOUTPackage(double latitude, double longitude, String title, String description, boolean own) {
         if (channel != null) {
             if (channel.isWritable()) {
                 channel.writeAndFlush(new AddRespawnMarkerOUT(latitude, longitude, title, description, username));
             }
         }
     }
-    public static void sendAddHQMarkerOUTPackage(double latitude, double longitude, String title, String description) {
+    public static void sendAddHQMarkerOUTPackage(double latitude, double longitude, String title, String description, boolean own) {
         if (channel != null) {
             if (channel.isWritable()) {
                 channel.writeAndFlush(new AddHQMarkerOUT(latitude, longitude, title, description, username));
             }
         }
     }
-    public static void sendAddFlagMarkerOUTPackage(double latitude, double longitude, String title, String description) {
+    public static void sendAddFlagMarkerOUTPackage(double latitude, double longitude, String title, String description, boolean own) {
         if (channel != null) {
             if (channel.isWritable()) {
                 channel.writeAndFlush(new AddFlagMarkerOUT(latitude, longitude, title, description, username));
