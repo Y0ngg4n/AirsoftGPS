@@ -132,7 +132,7 @@ public class OrgaAddMarkerDialogFragment extends DialogFragment {
                 case 2:
                     NettyClient.sendAddRespawnMarkerOUTPackage(Double.valueOf(latitudeTextView.getText().toString()), Double.valueOf(longitudeTextView.getText().toString()),
                             ((TextView) getView().findViewById(R.id.orgaaddmarkertitle)).getText().toString(),
-                            ((TextView) getView().findViewById(R.id.orgaaddmarkerdescription)).getText().toString());
+                            ((TextView) getView().findViewById(R.id.orgaaddmarkerdescription)).getText().toString(), own);
                     break;
                 case 3:
                     NettyClient.sendAddHQMarkerOUTPackage(Double.valueOf(latitudeTextView.getText().toString()), Double.valueOf(longitudeTextView.getText().toString()),
