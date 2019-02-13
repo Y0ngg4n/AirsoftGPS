@@ -109,15 +109,15 @@ public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
         } else if (packet instanceof AddRespawnMarkerIN) {
             Log.i("Pins", "AddRespawnMarkerIN");
             AddRespawnMarkerIN addRespawnMarkerIN = (AddRespawnMarkerIN) packet;
-            MainActivity.getMapFragment().addRespawnMarker(addRespawnMarkerIN.getLatitude(), addRespawnMarkerIN.getLongitude(), addRespawnMarkerIN.getTitle(), addRespawnMarkerIN.getDescription(), addRespawnMarkerIN.getUsername());
+            MainActivity.getMapFragment().addRespawnMarker(addRespawnMarkerIN.getLatitude(), addRespawnMarkerIN.getLongitude(), addRespawnMarkerIN.getTitle(), addRespawnMarkerIN.getDescription(), addRespawnMarkerIN.getUsername(), addRespawnMarkerIN.isOwn());
         } else if (packet instanceof AddHQMarkerIN) {
             Log.i("Pins", "AddHQMarkerIN");
             AddHQMarkerIN addHQMarkerIN = (AddHQMarkerIN) packet;
-            MainActivity.getMapFragment().addHQMarker(addHQMarkerIN.getLatitude(), addHQMarkerIN.getLongitude(), addHQMarkerIN.getTitle(), addHQMarkerIN.getDescription(), addHQMarkerIN.getUsername());
+            MainActivity.getMapFragment().addHQMarker(addHQMarkerIN.getLatitude(), addHQMarkerIN.getLongitude(), addHQMarkerIN.getTitle(), addHQMarkerIN.getDescription(), addHQMarkerIN.getUsername(), addHQMarkerIN.isOwn());
         } else if (packet instanceof AddFlagMarkerIN) {
             Log.i("Pins", "AddFlagMarkerIN");
             AddFlagMarkerIN addFlagMarkerIN = (AddFlagMarkerIN) packet;
-            MainActivity.getMapFragment().addFlagMarker(addFlagMarkerIN.getLatitude(), addFlagMarkerIN.getLongitude(), addFlagMarkerIN.getTitle(),addFlagMarkerIN.getDescription(), addFlagMarkerIN.getUsername());
+            MainActivity.getMapFragment().addFlagMarker(addFlagMarkerIN.getLatitude(), addFlagMarkerIN.getLongitude(), addFlagMarkerIN.getTitle(),addFlagMarkerIN.getDescription(), addFlagMarkerIN.getUsername(), addFlagMarkerIN.isOwn());
         }
     }
 

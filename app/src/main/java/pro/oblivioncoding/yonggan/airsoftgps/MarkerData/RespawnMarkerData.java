@@ -6,12 +6,15 @@ public class RespawnMarkerData {
 
     private String title, description, username;
 
-    public RespawnMarkerData(double latitude, double longitude, String title, String description, String username) {
+    private boolean own;
+
+    public RespawnMarkerData(double latitude, double longitude, String title, String description, String username, boolean own) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.title = title;
         this.description = description;
         this.username = username;
+        this.own = own;
     }
 
     public double getLatitude() {
@@ -32,5 +35,9 @@ public class RespawnMarkerData {
 
     public String getUsername() {
         return username;
+    }
+
+    public boolean isOwn() {
+        return own;
     }
 }

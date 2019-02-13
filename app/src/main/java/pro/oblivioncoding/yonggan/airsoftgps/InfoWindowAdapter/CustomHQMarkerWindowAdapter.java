@@ -19,7 +19,9 @@ public class CustomHQMarkerWindowAdapter implements GoogleMap.InfoWindowAdapter 
 
     private String title, description, username;
 
-    public CustomHQMarkerWindowAdapter(Context context, double latitude, double longitude, String title, String description, String username) {
+    private boolean own;
+
+    public CustomHQMarkerWindowAdapter(Context context, double latitude, double longitude, String title, String description, String username, boolean own) {
         mContext = context;
         mWindow = LayoutInflater.from(context).inflate(R.layout.custom_tactical_marker_info_window, null);
         this.latitude = latitude;
@@ -27,6 +29,7 @@ public class CustomHQMarkerWindowAdapter implements GoogleMap.InfoWindowAdapter 
         this.username = username;
         this.title = title;
         this.description = description;
+        this.own = own;
     }
 
     private void renderWindowText(Marker marker, View view) {
@@ -35,6 +38,7 @@ public class CustomHQMarkerWindowAdapter implements GoogleMap.InfoWindowAdapter 
         ((TextView) view.findViewById(R.id.longitude)).setText("Long: " + String.valueOf(longitude));
         ((TextView) view.findViewById(R.id.username)).setText("Creator: " + username);
         ((TextView) view.findViewById(R.id.description)).setText("Description: " + description);
+        ((TextView) view.findViewById(R.id.own)).setText("Owned: " + own);
     }
 
     @Override

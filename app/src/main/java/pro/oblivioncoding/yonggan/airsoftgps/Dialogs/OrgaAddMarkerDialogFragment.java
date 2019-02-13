@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -88,15 +89,19 @@ public class OrgaAddMarkerDialogFragment extends DialogFragment {
         }
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
+        getView().findViewById(R.id.orgaaddmarkerown).setVisibility(View.INVISIBLE);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position == 0) {
                     getView().findViewById(R.id.orgaaddmarkerteamnamelabel).setVisibility(View.VISIBLE);
                     getView().findViewById(R.id.orgaaddmarkerteamname).setVisibility(View.VISIBLE);
+                } else if (position == 2 || position == 3 || position == 4) {
+                    getView().findViewById(R.id.orgaaddmarkerown).setVisibility(View.VISIBLE);
                 } else {
                     getView().findViewById(R.id.orgaaddmarkerteamnamelabel).setVisibility(View.INVISIBLE);
                     getView().findViewById(R.id.orgaaddmarkerteamname).setVisibility(View.INVISIBLE);
+                    getView().findViewById(R.id.orgaaddmarkerown).setVisibility(View.INVISIBLE);
                 }
             }
 
@@ -132,17 +137,17 @@ public class OrgaAddMarkerDialogFragment extends DialogFragment {
                 case 2:
                     NettyClient.sendAddRespawnMarkerOUTPackage(Double.valueOf(latitudeTextView.getText().toString()), Double.valueOf(longitudeTextView.getText().toString()),
                             ((TextView) getView().findViewById(R.id.orgaaddmarkertitle)).getText().toString(),
-                            ((TextView) getView().findViewById(R.id.orgaaddmarkerdescription)).getText().toString(), own);
+                            ((TextView) getView().findViewById(R.id.orgaaddmarkerdescription)).getText().toString(), ((Switch) getView().findViewById(R.id.orgaaddmarkerown)).isSelected());
                     break;
                 case 3:
                     NettyClient.sendAddHQMarkerOUTPackage(Double.valueOf(latitudeTextView.getText().toString()), Double.valueOf(longitudeTextView.getText().toString()),
                             ((TextView) getView().findViewById(R.id.orgaaddmarkertitle)).getText().toString(),
-                            ((TextView) getView().findViewById(R.id.orgaaddmarkerdescription)).getText().toString());
+                            ((TextView) getView().findViewById(R.id.orgaaddmarkerdescription)).getText().toString(), ((Switch) getView().findViewById(R.id.orgaaddmarkerown)).isSelected());
                     break;
                 case 4:
                     NettyClient.sendAddFlagMarkerOUTPackage(Double.valueOf(latitudeTextView.getText().toString()), Double.valueOf(longitudeTextView.getText().toString()),
                             ((TextView) getView().findViewById(R.id.orgaaddmarkertitle)).getText().toString(),
-                            ((TextView) getView().findViewById(R.id.orgaaddmarkerdescription)).getText().toString());
+                            ((TextView) getView().findViewById(R.id.orgaaddmarkerdescription)).getText().toString(), ((Switch) getView().findViewById(R.id.orgaaddmarkerown)).isSelected());
                     break;
             }
         });

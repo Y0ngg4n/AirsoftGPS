@@ -33,4 +33,5 @@ public class MissionMarkerData {
     public String getUsername() {
         return username;
     }
+
 }

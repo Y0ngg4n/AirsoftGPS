@@ -11,6 +11,7 @@ public class AddRespawnMarkerOUT implements PacketOUT {
     private String title, description, username;
 
     private boolean own;
+
     public AddRespawnMarkerOUT(double latitude, double longitude, String title, String description, String username, boolean own) {
         this.latitude = latitude;
         this.longitude = longitude;

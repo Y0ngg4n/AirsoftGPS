@@ -197,13 +197,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 googleMap.setInfoWindowAdapter(new CustomMissionMarkerWindowAdapter(getContext(), missionMarkerData.getLatitude(), missionMarkerData.getLongitude(), missionMarkerData.getTitle(), missionMarkerData.getDescription(), missionMarkerData.getUsername()));
             } else if (respawnmarker.containsKey(marker)) {
                 RespawnMarkerData respawnMarkerData = respawnmarker.get(marker);
-                googleMap.setInfoWindowAdapter(new CustomRespawnMarkerWindowAdapter(getContext(), respawnMarkerData.getLatitude(), respawnMarkerData.getLongitude(), respawnMarkerData.getTitle(), respawnMarkerData.getDescription(), respawnMarkerData.getUsername()));
+                googleMap.setInfoWindowAdapter(new CustomRespawnMarkerWindowAdapter(getContext(), respawnMarkerData.getLatitude(), respawnMarkerData.getLongitude(), respawnMarkerData.getTitle(), respawnMarkerData.getDescription(), respawnMarkerData.getUsername(), respawnMarkerData.isOwn()));
             } else if (HQmarker.containsKey(marker)) {
                 HQMakerData hqMakerData = HQmarker.get(marker);
-                googleMap.setInfoWindowAdapter(new CustomHQMarkerWindowAdapter(getContext(), hqMakerData.getLatitude(), hqMakerData.getLongitude(), hqMakerData.getTitle(), hqMakerData.getDescription(), hqMakerData.getUsername()));
+                googleMap.setInfoWindowAdapter(new CustomHQMarkerWindowAdapter(getContext(), hqMakerData.getLatitude(), hqMakerData.getLongitude(), hqMakerData.getTitle(), hqMakerData.getDescription(), hqMakerData.getUsername(), hqMakerData.isOwn()));
             } else if (flagmarker.containsKey(marker)) {
                 FlagMarkerData flagMarkerData = flagmarker.get(marker);
-                googleMap.setInfoWindowAdapter(new CustomFlagMarkerWindowAdapter(getContext(), flagMarkerData.getLatitude(), flagMarkerData.getLongitude(), flagMarkerData.getTitle(), flagMarkerData.getDescription(), flagMarkerData.getUsername()));
+                googleMap.setInfoWindowAdapter(new CustomFlagMarkerWindowAdapter(getContext(), flagMarkerData.getLatitude(), flagMarkerData.getLongitude(), flagMarkerData.getTitle(), flagMarkerData.getDescription(), flagMarkerData.getUsername(), flagMarkerData.isOwn()));
             }
 
             marker.showInfoWindow();
@@ -306,9 +306,27 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    public void setOrgaMarkerIcon(Marker marker, MarkerData markerData) {
-
+    private void setTacticalMarkerIcon(Marker marker) {
+        marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
     }
+
+    private void setMissionMarkerIcon(Marker marker){
+        marker.setIcon(getBitmapDescriptor(R.drawable.ic_missionicon));
+    }
+
+    private void setRespawnMarkerIcon(Marker marker){
+        marker.setIcon(getBitmapDescriptor(R.drawable.ic_respawn));
+    }
+
+    private void setHQmarkerIcon(Marker marker){
+        marker.setIcon(getBitmapDescriptor(R.drawable.ic_hqicon));
+    }
+
+    private void setFlagMarkerIcon(Marker marker){
+        //TODO: Set Flag in other Color if owned or not
+        marker.setIcon(getBitmapDescriptor(R.drawable.ic_flagicon));
+    }
+
 
     public void setAreaPolygons() {
         PolygonOptions polygonOptions = new PolygonOptions();
@@ -344,7 +362,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void addTacticalMarker(double latitude, double longitude, int id, String title, String description, String teamname, String username) {
         if (googleMap != null) {
             getActivity().runOnUiThread(() -> {
-                tacticalmarker.put(googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))), new TacticalMarkerData(latitude, longitude, id, title, teamname, description, username));
+                Marker marker = googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)));
+                setTacticalMarkerIcon(marker);
+                tacticalmarker.put(marker, new TacticalMarkerData(latitude, longitude, id, title, teamname, description, username));
                 Log.i("Pin", "Setting Tactical Marker");
             });
         }
@@ -353,34 +373,42 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void addMissionMarker(double latitude, double longitude, String title, String description, String username) {
         if (googleMap != null) {
             getActivity().runOnUiThread(() -> {
-                missionmarker.put(googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))), new MissionMarkerData(latitude, longitude, title, description, username));
+                Marker marker = googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)));
+                setMissionMarkerIcon(marker);
+                missionmarker.put(marker, new MissionMarkerData(latitude, longitude, title, description, username));
                 Log.i("Pin", "Setting Mission Marker");
             });
         }
     }
 
-    public void addRespawnMarker(double latitude, double longitude, String title, String description, String username) {
+    public void addRespawnMarker(double latitude, double longitude, String title, String description, String username, boolean own) {
         if (googleMap != null) {
             getActivity().runOnUiThread(() -> {
-                respawnmarker.put(googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))), new RespawnMarkerData(latitude, longitude, title, description, username));
+                Marker marker = googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)));
+                setRespawnMarkerIcon(marker);
+                respawnmarker.put(marker, new RespawnMarkerData(latitude, longitude, title, description, username, own));
                 Log.i("Pin", "Setting Respawn Marker");
             });
         }
     }
 
-    public void addHQMarker(double latitude, double longitude, String title, String description, String username) {
+    public void addHQMarker(double latitude, double longitude, String title, String description, String username, boolean own) {
         if (googleMap != null) {
             getActivity().runOnUiThread(() -> {
-                HQmarker.put(googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))), new HQMakerData(latitude, longitude, title, description, username));
+                Marker marker = googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)));
+                setHQmarkerIcon(marker);
+                HQmarker.put(marker, new HQMakerData(latitude, longitude, title, description, username, own));
                 Log.i("Pin", "Setting HQ Marker");
             });
         }
     }
 
-    public void addFlagMarker(double latitude, double longitude, String title, String description, String username) {
+    public void addFlagMarker(double latitude, double longitude, String title, String description, String username, boolean own) {
         if (googleMap != null) {
             getActivity().runOnUiThread(() -> {
-                flagmarker.put(googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))), new FlagMarkerData(latitude, longitude, title, description, username));
+                Marker marker = googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)));
+                setFlagMarkerIcon(marker);
+                flagmarker.put(marker, new FlagMarkerData(latitude, longitude, title, description, username, own));
                 Log.i("Pin", "Setting Flag Marker");
             });
         }
