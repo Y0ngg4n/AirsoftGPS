@@ -4,14 +4,16 @@ public class MissionMarkerData {
 
     private double latitude, longitude;
 
-    private String title, description, username;
+    private String title, description, creator;
+private int markerID;
 
-    public MissionMarkerData(double latitude, double longitude, String title, String description, String username) {
+    public MissionMarkerData(double latitude, double longitude, int markerID, String title, String description, String creator) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.title = title;
         this.description = description;
-        this.username = username;
+        this.creator = creator;
+        this.markerID = markerID;
     }
 
     public double getLatitude() {
@@ -30,8 +32,11 @@ public class MissionMarkerData {
         return description;
     }
 
-    public String getUsername() {
-        return username;
+    public String getCreator() {
+        return creator;
     }
 
+    public int getMarkerID() {
+        return markerID;
+    }
 }

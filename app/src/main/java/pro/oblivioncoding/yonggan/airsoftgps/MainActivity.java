@@ -159,9 +159,8 @@ public class MainActivity extends AppCompatActivity
                         reloadFloatingButton.setImageResource(R.drawable.ic_reloading);
                     });
                 }
-            }, 60000L);
+            }, 30000L);
         });
-
 
         final FloatingActionButton currentlocationFloatingButton = (FloatingActionButton) findViewById(R.id.currentlocationfb);
         currentlocationFloatingButton.setOnClickListener(view -> {
@@ -178,7 +177,6 @@ public class MainActivity extends AppCompatActivity
         addMarkerFloatingButton.setOnClickListener(view -> {
             FragmentManager fragmentManager = getSupportFragmentManager();
             OrgaAddMarkerDialogFragment orgaAddMarkerDialogFragment = OrgaAddMarkerDialogFragment.newInstance("New Marker");
-
             orgaAddMarkerDialogFragment.show(fragmentManager, "orga_add_marker_dialog");
         });
 
@@ -194,7 +192,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_map);
-
 
         requestLocationPermissions();
 

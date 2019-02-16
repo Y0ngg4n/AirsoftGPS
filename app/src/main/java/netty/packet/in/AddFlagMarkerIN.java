@@ -8,17 +8,20 @@ public class AddFlagMarkerIN implements PacketIN {
 
     private double latitude, longitude;
 
-    private String title, description, username;
+    private String title, description, creator;
 
     private boolean own;
+
+    private int markerID;
     @Override
     public void read(JsonObject jsonObject) {
         latitude = jsonObject.get("latitude").getAsDouble();
         longitude = jsonObject.get("longitude").getAsDouble();
         title = jsonObject.get("title").getAsString();
         description = jsonObject.get("description").getAsString();
-        username = jsonObject.get("username").getAsString();
+        creator = jsonObject.get("creator").getAsString();
         own = jsonObject.get("own").getAsBoolean();
+        markerID = jsonObject.get("markerID").getAsInt();
     }
 
     @Override
@@ -42,8 +45,12 @@ public class AddFlagMarkerIN implements PacketIN {
         return description;
     }
 
-    public String getUsername() {
-        return username;
+    public String getCreator() {
+        return creator;
+    }
+
+    public int getMarkerID() {
+        return markerID;
     }
 
     public boolean isOwn() {

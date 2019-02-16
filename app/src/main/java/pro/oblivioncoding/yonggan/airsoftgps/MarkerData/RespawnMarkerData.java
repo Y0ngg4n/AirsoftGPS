@@ -4,17 +4,20 @@ public class RespawnMarkerData {
 
     private double latitude, longitude;
 
-    private String title, description, username;
+    private String title, description, creator;
 
     private boolean own;
 
-    public RespawnMarkerData(double latitude, double longitude, String title, String description, String username, boolean own) {
+    private int markerID;
+
+    public RespawnMarkerData(double latitude, double longitude, int markerID, String title, String description, String creator, boolean own) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.title = title;
         this.description = description;
-        this.username = username;
+        this.creator = creator;
         this.own = own;
+        this.markerID = markerID;
     }
 
     public double getLatitude() {
@@ -33,8 +36,12 @@ public class RespawnMarkerData {
         return description;
     }
 
-    public String getUsername() {
-        return username;
+    public String getCreator() {
+        return creator;
+    }
+
+    public int getMarkerID() {
+        return markerID;
     }
 
     public boolean isOwn() {

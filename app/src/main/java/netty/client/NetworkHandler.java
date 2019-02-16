@@ -101,23 +101,23 @@ public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
                         addTacticalMarkerIN.getTitle(),
                         addTacticalMarkerIN.getDescription(),
                         addTacticalMarkerIN.getTeamname(),
-                        addTacticalMarkerIN.getUsername());
+                        addTacticalMarkerIN.getCreator());
         } else if (packet instanceof AddMissionMarkerIN) {
             Log.i("Pins", "AddMissionMarkerIN");
             AddMissionMarkerIN addMissionMarkerIN = (AddMissionMarkerIN) packet;
-            MainActivity.getMapFragment().addMissionMarker(addMissionMarkerIN.getLatitude(),addMissionMarkerIN.getLongitude(), addMissionMarkerIN.getTitle(), addMissionMarkerIN.getDescription(), addMissionMarkerIN.getUsername());
+            MainActivity.getMapFragment().addMissionMarker(addMissionMarkerIN.getLatitude(),addMissionMarkerIN.getLongitude(), addMissionMarkerIN.getMarkerID(), addMissionMarkerIN.getTitle(), addMissionMarkerIN.getDescription(), addMissionMarkerIN.getCreator());
         } else if (packet instanceof AddRespawnMarkerIN) {
             Log.i("Pins", "AddRespawnMarkerIN");
             AddRespawnMarkerIN addRespawnMarkerIN = (AddRespawnMarkerIN) packet;
-            MainActivity.getMapFragment().addRespawnMarker(addRespawnMarkerIN.getLatitude(), addRespawnMarkerIN.getLongitude(), addRespawnMarkerIN.getTitle(), addRespawnMarkerIN.getDescription(), addRespawnMarkerIN.getUsername(), addRespawnMarkerIN.isOwn());
+            MainActivity.getMapFragment().addRespawnMarker(addRespawnMarkerIN.getLatitude(), addRespawnMarkerIN.getLongitude(),addRespawnMarkerIN.getMarkerID(), addRespawnMarkerIN.getTitle(), addRespawnMarkerIN.getDescription(), addRespawnMarkerIN.getCreator(), addRespawnMarkerIN.isOwn());
         } else if (packet instanceof AddHQMarkerIN) {
             Log.i("Pins", "AddHQMarkerIN");
             AddHQMarkerIN addHQMarkerIN = (AddHQMarkerIN) packet;
-            MainActivity.getMapFragment().addHQMarker(addHQMarkerIN.getLatitude(), addHQMarkerIN.getLongitude(), addHQMarkerIN.getTitle(), addHQMarkerIN.getDescription(), addHQMarkerIN.getUsername(), addHQMarkerIN.isOwn());
+            MainActivity.getMapFragment().addHQMarker(addHQMarkerIN.getLatitude(), addHQMarkerIN.getLongitude(), addHQMarkerIN.getMarkerID(), addHQMarkerIN.getTitle(), addHQMarkerIN.getDescription(), addHQMarkerIN.getCreator(), addHQMarkerIN.isOwn());
         } else if (packet instanceof AddFlagMarkerIN) {
             Log.i("Pins", "AddFlagMarkerIN");
             AddFlagMarkerIN addFlagMarkerIN = (AddFlagMarkerIN) packet;
-            MainActivity.getMapFragment().addFlagMarker(addFlagMarkerIN.getLatitude(), addFlagMarkerIN.getLongitude(), addFlagMarkerIN.getTitle(),addFlagMarkerIN.getDescription(), addFlagMarkerIN.getUsername(), addFlagMarkerIN.isOwn());
+            MainActivity.getMapFragment().addFlagMarker(addFlagMarkerIN.getLatitude(), addFlagMarkerIN.getLongitude(), addFlagMarkerIN.getMarkerID(), addFlagMarkerIN.getTitle(),addFlagMarkerIN.getDescription(), addFlagMarkerIN.getCreator(), addFlagMarkerIN.isOwn());
         }
     }
 

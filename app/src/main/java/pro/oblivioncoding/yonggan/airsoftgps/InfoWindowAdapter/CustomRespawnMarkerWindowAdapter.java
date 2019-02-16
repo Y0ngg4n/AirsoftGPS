@@ -23,7 +23,7 @@ public class CustomRespawnMarkerWindowAdapter implements GoogleMap.InfoWindowAda
 
     public CustomRespawnMarkerWindowAdapter(Context context, double latitude, double longitude, String title, String description, String username, boolean own) {
         mContext = context;
-        mWindow = LayoutInflater.from(context).inflate(R.layout.custom_tactical_marker_info_window, null);
+        mWindow = LayoutInflater.from(context).inflate(R.layout.custom_respawn_marker_info_window, null);
         this.latitude = latitude;
         this.longitude = longitude;
         this.username = username;

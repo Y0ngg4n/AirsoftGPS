@@ -21,7 +21,7 @@ public class CustomMissionMarkerWindowAdapter implements GoogleMap.InfoWindowAda
 
     public CustomMissionMarkerWindowAdapter(Context context, double latitude, double longitude, String title, String description, String username) {
         mContext = context;
-        mWindow = LayoutInflater.from(context).inflate(R.layout.custom_tactical_marker_info_window, null);
+        mWindow = LayoutInflater.from(context).inflate(R.layout.custom_mission_marker_info_window, null);
         this.latitude = latitude;
         this.longitude = longitude;
         this.username = username;

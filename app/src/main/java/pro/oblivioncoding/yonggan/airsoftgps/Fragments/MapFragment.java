@@ -181,7 +181,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 googleMap.setInfoWindowAdapter(new CustomMarkerInfoWindowAdaper(getContext(), markerData0.getTitle(), markerData0.getLatitude(), markerData0.getLongitude(), markerData0.getTimestamp(), markerData0.getTeamname(), markerData0.isAlive(), markerData0.isUnderfire(), markerData0.isMission(), markerData0.isSupport()));
             } else if (tacticalmarker.containsKey(marker)) {
                 TacticalMarkerData tacticalMarkerData = tacticalmarker.get(marker);
-                googleMap.setInfoWindowAdapter(new CustomTacticalMarkerWindowAdapter(getContext(), tacticalMarkerData.getLatitude(), tacticalMarkerData.getLongitude(), tacticalMarkerData.getTeamname(), tacticalMarkerData.getTitle(), tacticalMarkerData.getDescription(), tacticalMarkerData.getUsername()));
+                googleMap.setInfoWindowAdapter(new CustomTacticalMarkerWindowAdapter(getContext(), tacticalMarkerData.getLatitude(), tacticalMarkerData.getLongitude(), tacticalMarkerData.getTeamname(), tacticalMarkerData.getTitle(), tacticalMarkerData.getDescription(), tacticalMarkerData.getCreator()));
                 if (MainActivity.enableOrgaFunctions && MainActivity.tacticalMarker) {
                     MainActivity.removeMarkerFloatingButton.setOnClickListener(v -> {
                         Log.i("Tactical Marker", "Remove Tactical Marker " + marker);
@@ -194,18 +194,57 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 }
             } else if (missionmarker.containsKey(marker)) {
                 MissionMarkerData missionMarkerData = missionmarker.get(marker);
-                googleMap.setInfoWindowAdapter(new CustomMissionMarkerWindowAdapter(getContext(), missionMarkerData.getLatitude(), missionMarkerData.getLongitude(), missionMarkerData.getTitle(), missionMarkerData.getDescription(), missionMarkerData.getUsername()));
+                googleMap.setInfoWindowAdapter(new CustomMissionMarkerWindowAdapter(getContext(), missionMarkerData.getLatitude(), missionMarkerData.getLongitude(), missionMarkerData.getTitle(), missionMarkerData.getDescription(), missionMarkerData.getCreator()));
+                if (MainActivity.enableOrgaFunctions && MainActivity.missionMarker) {
+                    MainActivity.removeMarkerFloatingButton.setOnClickListener(v -> {
+                        Log.i("Mission Marker", "Remove Mission Marker " + marker);
+                        NettyClient.sendRemoveMissionMarkerOUTPackage(missionmarker.get(marker).getMarkerID());
+                        marker.remove();
+                        missionmarker.remove(marker);
+                        MainActivity.removeMarkerFloatingButton.hide();
+                    });
+                    MainActivity.removeMarkerFloatingButton.show();
+                }
             } else if (respawnmarker.containsKey(marker)) {
                 RespawnMarkerData respawnMarkerData = respawnmarker.get(marker);
-                googleMap.setInfoWindowAdapter(new CustomRespawnMarkerWindowAdapter(getContext(), respawnMarkerData.getLatitude(), respawnMarkerData.getLongitude(), respawnMarkerData.getTitle(), respawnMarkerData.getDescription(), respawnMarkerData.getUsername(), respawnMarkerData.isOwn()));
+                googleMap.setInfoWindowAdapter(new CustomRespawnMarkerWindowAdapter(getContext(), respawnMarkerData.getLatitude(), respawnMarkerData.getLongitude(), respawnMarkerData.getTitle(), respawnMarkerData.getDescription(), respawnMarkerData.getCreator(), respawnMarkerData.isOwn()));
+                if (MainActivity.enableOrgaFunctions && MainActivity.respawnMarker) {
+                    MainActivity.removeMarkerFloatingButton.setOnClickListener(v -> {
+                        Log.i("Respawn Marker", "Remove Respawn Marker " + marker);
+                        NettyClient.sendRemoveRespawnMarkerOUTPackage(respawnmarker.get(marker).getMarkerID());
+                        marker.remove();
+                        respawnmarker.remove(marker);
+                        MainActivity.removeMarkerFloatingButton.hide();
+                    });
+                    MainActivity.removeMarkerFloatingButton.show();
+                }
             } else if (HQmarker.containsKey(marker)) {
                 HQMakerData hqMakerData = HQmarker.get(marker);
-                googleMap.setInfoWindowAdapter(new CustomHQMarkerWindowAdapter(getContext(), hqMakerData.getLatitude(), hqMakerData.getLongitude(), hqMakerData.getTitle(), hqMakerData.getDescription(), hqMakerData.getUsername(), hqMakerData.isOwn()));
+                googleMap.setInfoWindowAdapter(new CustomHQMarkerWindowAdapter(getContext(), hqMakerData.getLatitude(), hqMakerData.getLongitude(), hqMakerData.getTitle(), hqMakerData.getDescription(), hqMakerData.getCreator(), hqMakerData.isOwn()));
+                if (MainActivity.enableOrgaFunctions && MainActivity.hqMarker) {
+                    MainActivity.removeMarkerFloatingButton.setOnClickListener(v -> {
+                        Log.i("HQ Marker", "Remove HQ Marker " + marker);
+                        NettyClient.sendRemoveHQMarkerOUTPackage(HQmarker.get(marker).getMarkerID());
+                        marker.remove();
+                        HQmarker.remove(marker);
+                        MainActivity.removeMarkerFloatingButton.hide();
+                    });
+                    MainActivity.removeMarkerFloatingButton.show();
+                }
             } else if (flagmarker.containsKey(marker)) {
                 FlagMarkerData flagMarkerData = flagmarker.get(marker);
-                googleMap.setInfoWindowAdapter(new CustomFlagMarkerWindowAdapter(getContext(), flagMarkerData.getLatitude(), flagMarkerData.getLongitude(), flagMarkerData.getTitle(), flagMarkerData.getDescription(), flagMarkerData.getUsername(), flagMarkerData.isOwn()));
+                googleMap.setInfoWindowAdapter(new CustomFlagMarkerWindowAdapter(getContext(), flagMarkerData.getLatitude(), flagMarkerData.getLongitude(), flagMarkerData.getTitle(), flagMarkerData.getDescription(), flagMarkerData.getCreator(), flagMarkerData.isOwn()));
+                if (MainActivity.enableOrgaFunctions && MainActivity.flagMarker) {
+                    MainActivity.removeMarkerFloatingButton.setOnClickListener(v -> {
+                        Log.i("Flag Marker", "Remove Flag Marker " + marker);
+                        NettyClient.sendRemoveFlagMarkerOUTPackage(flagmarker.get(marker).getMarkerID());
+                        marker.remove();
+                        flagmarker.remove(marker);
+                        MainActivity.removeMarkerFloatingButton.hide();
+                    });
+                    MainActivity.removeMarkerFloatingButton.show();
+                }
             }
-
             marker.showInfoWindow();
             return true;
         });
@@ -370,45 +409,45 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    public void addMissionMarker(double latitude, double longitude, String title, String description, String username) {
+    public void addMissionMarker(double latitude, double longitude, int id, String title, String description, String username) {
         if (googleMap != null) {
             getActivity().runOnUiThread(() -> {
                 Marker marker = googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)));
                 setMissionMarkerIcon(marker);
-                missionmarker.put(marker, new MissionMarkerData(latitude, longitude, title, description, username));
+                missionmarker.put(marker, new MissionMarkerData(latitude, longitude, id, title, description, username));
                 Log.i("Pin", "Setting Mission Marker");
             });
         }
     }
 
-    public void addRespawnMarker(double latitude, double longitude, String title, String description, String username, boolean own) {
+    public void addRespawnMarker(double latitude, double longitude, int id, String title, String description, String username, boolean own) {
         if (googleMap != null) {
             getActivity().runOnUiThread(() -> {
                 Marker marker = googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)));
                 setRespawnMarkerIcon(marker);
-                respawnmarker.put(marker, new RespawnMarkerData(latitude, longitude, title, description, username, own));
+                respawnmarker.put(marker, new RespawnMarkerData(latitude, longitude, id, title, description, username, own));
                 Log.i("Pin", "Setting Respawn Marker");
             });
         }
     }
 
-    public void addHQMarker(double latitude, double longitude, String title, String description, String username, boolean own) {
+    public void addHQMarker(double latitude, double longitude, int id, String title, String description, String username, boolean own) {
         if (googleMap != null) {
             getActivity().runOnUiThread(() -> {
                 Marker marker = googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)));
                 setHQmarkerIcon(marker);
-                HQmarker.put(marker, new HQMakerData(latitude, longitude, title, description, username, own));
+                HQmarker.put(marker, new HQMakerData(latitude, longitude, id,  title, description, username, own));
                 Log.i("Pin", "Setting HQ Marker");
             });
         }
     }
 
-    public void addFlagMarker(double latitude, double longitude, String title, String description, String username, boolean own) {
+    public void addFlagMarker(double latitude, double longitude, int id, String title, String description, String username, boolean own) {
         if (googleMap != null) {
             getActivity().runOnUiThread(() -> {
                 Marker marker = googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)));
                 setFlagMarkerIcon(marker);
-                flagmarker.put(marker, new FlagMarkerData(latitude, longitude, title, description, username, own));
+                flagmarker.put(marker, new FlagMarkerData(latitude, longitude, id, title, description, username, own));
                 Log.i("Pin", "Setting Flag Marker");
             });
         }

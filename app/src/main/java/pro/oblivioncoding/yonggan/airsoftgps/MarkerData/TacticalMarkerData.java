@@ -5,13 +5,13 @@ public class TacticalMarkerData {
     private int id;
     private double latitude, longitude;
 
-    private String teamname, title, description, username;
+    private String teamname, title, description, creator;
 
-    public TacticalMarkerData(double latitude, double longitude, int id, String title, String teamname, String description, String username) {
+    public TacticalMarkerData(double latitude, double longitude, int id, String title, String teamname, String description, String creator) {
         this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.username = username;
+        this.creator = creator;
         this.title = title;
         this.description = description;
         this.teamname = teamname;
@@ -41,7 +41,7 @@ public class TacticalMarkerData {
         return id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getCreator() {
+        return creator;
     }
 }

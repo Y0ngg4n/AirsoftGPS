@@ -27,6 +27,10 @@ import netty.packet.out.AuthPacketOUT;
 import netty.packet.out.ClientPositionOUT;
 import netty.packet.out.ClientStatusUpdateOUT;
 import netty.packet.out.RefreshPacketOUT;
+import netty.packet.out.RemoveMarker.RemoveFlagMarkerOUT;
+import netty.packet.out.RemoveMarker.RemoveHQMarkerOUT;
+import netty.packet.out.RemoveMarker.RemoveMissionMarkerOUT;
+import netty.packet.out.RemoveMarker.RemoveRespawnMarkerOUT;
 import netty.packet.out.RemoveMarker.RemoveTacticalMarkerOUT;
 import pro.oblivioncoding.yonggan.airsoftgps.LoginActivity;
 
@@ -141,6 +145,38 @@ public class NettyClient {
             if(channel.isWritable()){
                 RemoveTacticalMarkerOUT removeTacticalMarkerOUT = new RemoveTacticalMarkerOUT(markerID, username);
                 channel.writeAndFlush(removeTacticalMarkerOUT);
+            }
+        }
+    }
+    public static void sendRemoveMissionMarkerOUTPackage(int markerID){
+        if(channel != null){
+            if(channel.isWritable()){
+                RemoveMissionMarkerOUT removeMissionMarkerOUT = new RemoveMissionMarkerOUT(markerID, username);
+                channel.writeAndFlush(removeMissionMarkerOUT);
+            }
+        }
+    }
+    public static void sendRemoveRespawnMarkerOUTPackage(int markerID){
+        if(channel != null){
+            if(channel.isWritable()){
+                RemoveRespawnMarkerOUT removeRespawnMarkerOUT = new RemoveRespawnMarkerOUT(markerID, username);
+                channel.writeAndFlush(removeRespawnMarkerOUT);
+            }
+        }
+    }
+    public static void sendRemoveHQMarkerOUTPackage(int markerID){
+        if(channel != null){
+            if(channel.isWritable()){
+                RemoveHQMarkerOUT removeHQMarkerOUT = new RemoveHQMarkerOUT(markerID, username);
+                channel.writeAndFlush(removeHQMarkerOUT);
+            }
+        }
+    }
+    public static void sendRemoveFlagMarkerOUTPackage(int markerID){
+        if(channel != null){
+            if(channel.isWritable()){
+                RemoveFlagMarkerOUT removeFlagMarkerOUT = new RemoveFlagMarkerOUT(markerID, username);
+                channel.writeAndFlush(removeFlagMarkerOUT);
             }
         }
     }

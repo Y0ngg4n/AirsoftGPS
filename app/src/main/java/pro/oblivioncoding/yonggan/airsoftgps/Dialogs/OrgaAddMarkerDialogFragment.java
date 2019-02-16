@@ -93,10 +93,13 @@ public class OrgaAddMarkerDialogFragment extends DialogFragment {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.i("Spinner", position + " selected");
                 if (position == 0) {
                     getView().findViewById(R.id.orgaaddmarkerteamnamelabel).setVisibility(View.VISIBLE);
                     getView().findViewById(R.id.orgaaddmarkerteamname).setVisibility(View.VISIBLE);
                 } else if (position == 2 || position == 3 || position == 4) {
+                    getView().findViewById(R.id.orgaaddmarkerteamnamelabel).setVisibility(View.INVISIBLE);
+                    getView().findViewById(R.id.orgaaddmarkerteamname).setVisibility(View.INVISIBLE);
                     getView().findViewById(R.id.orgaaddmarkerown).setVisibility(View.VISIBLE);
                 } else {
                     getView().findViewById(R.id.orgaaddmarkerteamnamelabel).setVisibility(View.INVISIBLE);

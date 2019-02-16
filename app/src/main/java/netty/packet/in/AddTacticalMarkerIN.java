@@ -10,7 +10,7 @@ public class AddTacticalMarkerIN implements PacketIN {
 
     private double latitude, longitude;
 
-    private String teamname, title, description, username;
+    private String teamname, title, description, creator;
 
     @Override
     public void read(JsonObject jsonObject) {
@@ -20,7 +20,7 @@ public class AddTacticalMarkerIN implements PacketIN {
         teamname = jsonObject.get("teamname").getAsString();
         title = jsonObject.get("title").getAsString();
         description = jsonObject.get("description").getAsString();
-        username = jsonObject.get("username").getAsString();
+        creator = jsonObject.get("creator").getAsString();
     }
 
     @Override
@@ -48,8 +48,8 @@ public class AddTacticalMarkerIN implements PacketIN {
         return description;
     }
 
-    public String getUsername() {
-        return username;
+    public String getCreator() {
+        return creator;
     }
 
     public int getMarkerID() {
