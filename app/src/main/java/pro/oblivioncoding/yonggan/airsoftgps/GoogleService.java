@@ -24,6 +24,7 @@ public class GoogleService extends Service implements LocationListener {
     private static final int NOTIF_ID = 1;
     private static final String NOTIF_CHANNEL_ID = "AirsoftGPS";
 
+    Intent notificationIntent;
     public GoogleService() {
     }
 
@@ -40,8 +41,12 @@ public class GoogleService extends Service implements LocationListener {
         return super.onStartCommand(intent, flags, startId);
     }
 
+    public void stopService(){
+        PendingIntent.getService(this, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+    }
+
     private void startForeground() {
-        Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
+        notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,
                 notificationIntent, 0);
@@ -66,7 +71,6 @@ public class GoogleService extends Service implements LocationListener {
                 .setContentIntent(pendingIntent)
                 .build());
     }
-
 
     @Override
     public void onLocationChanged(Location location) {

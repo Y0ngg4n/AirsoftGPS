@@ -104,53 +104,53 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
 
         //############ Floating Buttons ####################
-        hitFloatingButton = (FloatingActionButton) findViewById(R.id.hitfb);
-        supportFloatingButton = (FloatingActionButton) findViewById(R.id.supportfb);
-        underfireFloatingButton = (FloatingActionButton) findViewById(R.id.underfirefb);
-        missionFloatingButton = (FloatingActionButton) findViewById(R.id.missionfb);
+        hitFloatingButton = findViewById(R.id.hitfb);
+        supportFloatingButton = findViewById(R.id.supportfb);
+        underfireFloatingButton = findViewById(R.id.underfirefb);
+        missionFloatingButton = findViewById(R.id.missionfb);
         hitFloatingButton.setOnClickListener(view -> {
-            if (mapFragment != null && mapFragment.ownMarker != null) {
+            if (mapFragment != null && MapFragment.ownMarker != null) {
                 alive = !alive;
-                nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
+                NettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
                 setAliveIcon();
             }
         });
 
         supportFloatingButton.setOnClickListener(view -> {
-            if (mapFragment != null && mapFragment.ownMarker != null) {
+            if (mapFragment != null && MapFragment.ownMarker != null) {
                 support = !support;
-                nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
+                NettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
                 setSupportIcon();
             }
         });
 
         underfireFloatingButton.setOnClickListener(view -> {
-            if (mapFragment != null && mapFragment.ownMarker != null) {
+            if (mapFragment != null && MapFragment.ownMarker != null) {
                 underFire = !underFire;
-                nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
+                NettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
                 setUnderFireIcon();
             }
         });
 
         missionFloatingButton.setOnClickListener(view -> {
-            if (mapFragment != null && mapFragment.ownMarker != null) {
+            if (mapFragment != null && MapFragment.ownMarker != null) {
                 mission = !mission;
-                nettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
+                NettyClient.sendClientStatusPositionOUTPackage(alive, underFire, mission, support);
                 setMissionIcon();
             }
         });
 
 
-        reloadFloatingButton = (FloatingActionButton) findViewById(R.id.reloadfb);
+        reloadFloatingButton = findViewById(R.id.reloadfb);
         reloadFloatingButton.setOnClickListener(view -> {
             reloadFloatingButton.setEnabled(false);
             reloadFloatingButton.setImageResource(R.drawable.ic_reloading);
-            MainActivity.nettyClient.sendRefreshPacketOUT();
+            NettyClient.sendRefreshPacketOUT();
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
@@ -162,14 +162,14 @@ public class MainActivity extends AppCompatActivity
             }, 30000L);
         });
 
-        final FloatingActionButton currentlocationFloatingButton = (FloatingActionButton) findViewById(R.id.currentlocationfb);
+        final FloatingActionButton currentlocationFloatingButton = findViewById(R.id.currentlocationfb);
         currentlocationFloatingButton.setOnClickListener(view -> {
-            if (mapFragment != null && mapFragment.ownMarker != null) {
-                mapFragment.setCamera(mapFragment.ownMarker.getPosition());
+            if (mapFragment != null && MapFragment.ownMarker != null) {
+                mapFragment.setCamera(MapFragment.ownMarker.getPosition());
             }
         });
 
-        addMarkerFloatingButton = (FloatingActionButton) findViewById(R.id.setMarker);
+        addMarkerFloatingButton = findViewById(R.id.setMarker);
         if (enableOrgaFunctions)
             addMarkerFloatingButton.show();
         else
@@ -180,16 +180,16 @@ public class MainActivity extends AppCompatActivity
             orgaAddMarkerDialogFragment.show(fragmentManager, "orga_add_marker_dialog");
         });
 
-        removeMarkerFloatingButton = (FloatingActionButton) findViewById(R.id.removeMarker);
+        removeMarkerFloatingButton = findViewById(R.id.removeMarker);
         removeMarkerFloatingButton.hide();
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_map);
 
@@ -238,7 +238,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -330,10 +330,13 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_radio) {
             fragmentTransaction.attach(radioFragment);
             currentFragment = radioFragment;
+        }else if(id == R.id.nav_exit){
+            googleService.stopService();
+            System.exit(0);
         }
 
         fragmentTransaction.commit();
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

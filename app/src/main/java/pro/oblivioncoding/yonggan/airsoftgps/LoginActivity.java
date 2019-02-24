@@ -13,7 +13,7 @@ import netty.client.NetworkHandler;
 
 public class LoginActivity extends AppCompatActivity {
 
-    public static final String HOST = "oblivioncoding.pro";
+    public static final String HOST = "bierbrauer-beerzone.de";
     public static final int PORT = 12345;
 
     public static String username;
