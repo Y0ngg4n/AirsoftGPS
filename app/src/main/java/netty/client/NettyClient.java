@@ -60,6 +60,7 @@ import netty.packet.out.RemoveMarker.RemoveHQMarkerOUT;
 import netty.packet.out.RemoveMarker.RemoveMissionMarkerOUT;
 import netty.packet.out.RemoveMarker.RemoveRespawnMarkerOUT;
 import netty.packet.out.RemoveMarker.RemoveTacticalMarkerOUT;
+import netty.packet.out.UpdateMarker.UpdateFlagMarkerOUT;
 import pro.oblivioncoding.yonggan.airsoftgps.LoginActivity;
 import pro.oblivioncoding.yonggan.airsoftgps.MainActivity;
 
@@ -244,6 +245,15 @@ public class NettyClient {
             if (channel.isWritable()) {
                 RemoveFlagMarkerOUT removeFlagMarkerOUT = new RemoveFlagMarkerOUT(markerID, username);
                 channel.writeAndFlush(removeFlagMarkerOUT);
+            }
+        }
+    }
+
+    public static void sendUpdateFlagMarkerPackageOUT(int flagID, boolean isOwned){
+        if(channel != null){
+            if (channel.isWritable()){
+                UpdateFlagMarkerOUT updateFlagMarkerOUT = new UpdateFlagMarkerOUT(flagID, isOwned);
+                channel.writeAndFlush(updateFlagMarkerOUT);
             }
         }
     }

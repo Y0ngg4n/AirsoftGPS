@@ -45,18 +45,26 @@
         android:id="@+id/setMarker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="200dp"
-        android:layout_marginRight="16dp"
-        android:layout_gravity="top|end"
+        android:layout_marginTop="130dp"
+        android:layout_marginLeft="16dp"
+        android:layout_gravity="top|start"
         app:srcCompat="@drawable/ic_setpin" />
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/removeMarker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="270dp"
-        android:layout_marginRight="16dp"
-        android:layout_gravity="top|end"
+        android:layout_marginTop="200dp"
+        android:layout_marginLeft="16dp"
+        android:layout_gravity="top|start"
         app:srcCompat="@drawable/ic_remove_marker" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/swapFlagMarker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="270dp"
+        android:layout_marginLeft="16dp"
+        android:layout_gravity="top|start"
+        app:srcCompat="@drawable/ic_swap_marker" />
 
     <LinearLayout
         android:layout_width="wrap_content"

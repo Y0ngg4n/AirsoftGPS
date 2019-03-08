@@ -80,8 +80,8 @@ public class MainActivity extends AppCompatActivity
     private static FloatingActionButton missionFloatingButton;
     private static FloatingActionButton reloadFloatingButton;
     private static FloatingActionButton addMarkerFloatingButton;
-
     public static FloatingActionButton removeMarkerFloatingButton;
+    public static FloatingActionButton swapFlagMarkerFloatingButton;
 
     public static boolean tacticalMarker = false, missionMarker = false, hqMarker = false, respawnMarker = false, flagMarker = false;
 
@@ -182,6 +182,9 @@ public class MainActivity extends AppCompatActivity
 
         removeMarkerFloatingButton = findViewById(R.id.removeMarker);
         removeMarkerFloatingButton.hide();
+
+        swapFlagMarkerFloatingButton = findViewById(R.id.swapFlagMarker);
+        swapFlagMarkerFloatingButton.hide();
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(

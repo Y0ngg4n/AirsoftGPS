@@ -235,6 +235,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 FlagMarkerData flagMarkerData = flagmarker.get(marker);
                 googleMap.setInfoWindowAdapter(new CustomFlagMarkerWindowAdapter(getContext(), flagMarkerData.getLatitude(), flagMarkerData.getLongitude(), flagMarkerData.getTitle(), flagMarkerData.getDescription(), flagMarkerData.getCreator(), flagMarkerData.isOwn()));
                 if (MainActivity.enableOrgaFunctions && MainActivity.flagMarker) {
+                    MainActivity.swapFlagMarkerFloatingButton.setOnClickListener(v -> {
+                        Log.i("Flag Marker", "Swap Flag Marker" + marker);
+                        NettyClient.sendUpdateFlagMarkerPackageOUT(flagmarker.get(marker).getMarkerID(), !flagmarker.get(marker).isOwn());
+                    });
                     MainActivity.removeMarkerFloatingButton.setOnClickListener(v -> {
                         Log.i("Flag Marker", "Remove Flag Marker " + marker);
                         NettyClient.sendRemoveFlagMarkerOUTPackage(flagmarker.get(marker).getMarkerID());
