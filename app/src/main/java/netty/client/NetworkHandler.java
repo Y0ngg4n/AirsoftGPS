@@ -11,11 +11,11 @@ import java.sql.Timestamp;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import netty.packet.PacketIN;
-import netty.packet.in.AddFlagMarkerIN;
-import netty.packet.in.AddHQMarkerIN;
-import netty.packet.in.AddMissionMarkerIN;
-import netty.packet.in.AddRespawnMarkerIN;
-import netty.packet.in.AddTacticalMarkerIN;
+import netty.packet.in.AddMarker.AddFlagMarkerIN;
+import netty.packet.in.AddMarker.AddHQMarkerIN;
+import netty.packet.in.AddMarker.AddMissionMarkerIN;
+import netty.packet.in.AddMarker.AddRespawnMarkerIN;
+import netty.packet.in.AddMarker.AddTacticalMarkerIN;
 import netty.packet.in.LoginResponsePacketIN;
 import netty.packet.in.ClientAllPositionsIN;
 import netty.packet.in.OrgaAuthIN;
@@ -53,32 +53,31 @@ public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
             Log.i("NettyAllPosition", "All Position incoming");
             final ClientAllPositionsIN clientAllPositionsIN = ((ClientAllPositionsIN) packet);
             //TODO: Handle Data and send them
-            Log.i("NettyAllPosition", String.valueOf(clientAllPositionsIN.getJsonArray()));
+            Log.i("NettyAllPosition", String.valueOf(clientAllPositionsIN.getJsonObject()));
 
-            for (JsonElement jsonElement : clientAllPositionsIN.getJsonArray()) {
-                Log.i("NettyAllPosition", jsonElement.getAsJsonObject().get("username").getAsString());
+            Log.i("NettyAllPosition", clientAllPositionsIN.getJsonObject().getAsJsonObject().get("username").getAsString());
 
-                MainActivity.getMapFragment().createMarker(
-                        jsonElement.getAsJsonObject().get("latitude").getAsDouble(),
-                        jsonElement.getAsJsonObject().get("longitude").getAsDouble(),
-                        jsonElement.getAsJsonObject().get("userID").getAsInt(),
-                        jsonElement.getAsJsonObject().get("username").getAsString(),
-                        Timestamp.valueOf(jsonElement.getAsJsonObject().get("timestamp").getAsString()),
-                        jsonElement.getAsJsonObject().get("teamname").getAsString() + " (" + jsonElement.getAsJsonObject().get("teamid").getAsString() + ")",
-                        jsonElement.getAsJsonObject().get("alive").getAsBoolean(),
-                        jsonElement.getAsJsonObject().get("underfire").getAsBoolean(),
-                        jsonElement.getAsJsonObject().get("mission").getAsBoolean(),
-                        jsonElement.getAsJsonObject().get("support").getAsBoolean()
-                );
-                if (MainActivity.showAreaPolygons) {
-                    MainActivity.mapFragment.removeAreaPolygons();
-                    MainActivity.mapFragment.setAreaPolygons();
-                }
+            MainActivity.getMapFragment().createMarker(
+                    clientAllPositionsIN.getJsonObject().getAsJsonObject().get("latitude").getAsDouble(),
+                    clientAllPositionsIN.getJsonObject().getAsJsonObject().get("longitude").getAsDouble(),
+                    clientAllPositionsIN.getJsonObject().getAsJsonObject().get("userID").getAsInt(),
+                    clientAllPositionsIN.getJsonObject().getAsJsonObject().get("username").getAsString(),
+                    Timestamp.valueOf(clientAllPositionsIN.getJsonObject().getAsJsonObject().get("timestamp").getAsString()),
+                    clientAllPositionsIN.getJsonObject().getAsJsonObject().get("teamname").getAsString() + " (" + clientAllPositionsIN.getJsonObject().getAsJsonObject().get("teamid").getAsString() + ")",
+                    clientAllPositionsIN.getJsonObject().getAsJsonObject().get("alive").getAsBoolean(),
+                    clientAllPositionsIN.getJsonObject().getAsJsonObject().get("underfire").getAsBoolean(),
+                    clientAllPositionsIN.getJsonObject().getAsJsonObject().get("mission").getAsBoolean(),
+                    clientAllPositionsIN.getJsonObject().getAsJsonObject().get("support").getAsBoolean()
+            );
 
-                if (MainActivity.showAreaCircles) {
-                    MainActivity.mapFragment.removeAreaCircles();
-                    MainActivity.mapFragment.setAreaCircles();
-                }
+            if (MainActivity.showAreaPolygons) {
+                MainActivity.mapFragment.removeAreaPolygons();
+                MainActivity.mapFragment.setAreaPolygons();
+            }
+
+            if (MainActivity.showAreaCircles) {
+                MainActivity.mapFragment.removeAreaCircles();
+                MainActivity.mapFragment.setAreaCircles();
             }
         } else if (packet instanceof OrgaAuthIN) {
             final OrgaAuthIN orgaAuthIN = (OrgaAuthIN) packet;
@@ -94,22 +93,22 @@ public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
         } else if (packet instanceof AddTacticalMarkerIN) {
             AddTacticalMarkerIN addTacticalMarkerIN = (AddTacticalMarkerIN) packet;
             Log.i("Pins", String.valueOf(addTacticalMarkerIN.getId()));
-                MainActivity.getMapFragment().addTacticalMarker(
-                        addTacticalMarkerIN.getLatitude(),
-                        addTacticalMarkerIN.getLongitude(),
-                        addTacticalMarkerIN.getMarkerID(),
-                        addTacticalMarkerIN.getTitle(),
-                        addTacticalMarkerIN.getDescription(),
-                        addTacticalMarkerIN.getTeamname(),
-                        addTacticalMarkerIN.getCreator());
+            MainActivity.getMapFragment().addTacticalMarker(
+                    addTacticalMarkerIN.getLatitude(),
+                    addTacticalMarkerIN.getLongitude(),
+                    addTacticalMarkerIN.getMarkerID(),
+                    addTacticalMarkerIN.getTitle(),
+                    addTacticalMarkerIN.getDescription(),
+                    addTacticalMarkerIN.getTeamname(),
+                    addTacticalMarkerIN.getCreator());
         } else if (packet instanceof AddMissionMarkerIN) {
             Log.i("Pins", "AddMissionMarkerIN");
             AddMissionMarkerIN addMissionMarkerIN = (AddMissionMarkerIN) packet;
-            MainActivity.getMapFragment().addMissionMarker(addMissionMarkerIN.getLatitude(),addMissionMarkerIN.getLongitude(), addMissionMarkerIN.getMarkerID(), addMissionMarkerIN.getTitle(), addMissionMarkerIN.getDescription(), addMissionMarkerIN.getCreator());
+            MainActivity.getMapFragment().addMissionMarker(addMissionMarkerIN.getLatitude(), addMissionMarkerIN.getLongitude(), addMissionMarkerIN.getMarkerID(), addMissionMarkerIN.getTitle(), addMissionMarkerIN.getDescription(), addMissionMarkerIN.getCreator());
         } else if (packet instanceof AddRespawnMarkerIN) {
             Log.i("Pins", "AddRespawnMarkerIN");
             AddRespawnMarkerIN addRespawnMarkerIN = (AddRespawnMarkerIN) packet;
-            MainActivity.getMapFragment().addRespawnMarker(addRespawnMarkerIN.getLatitude(), addRespawnMarkerIN.getLongitude(),addRespawnMarkerIN.getMarkerID(), addRespawnMarkerIN.getTitle(), addRespawnMarkerIN.getDescription(), addRespawnMarkerIN.getCreator(), addRespawnMarkerIN.isOwn());
+            MainActivity.getMapFragment().addRespawnMarker(addRespawnMarkerIN.getLatitude(), addRespawnMarkerIN.getLongitude(), addRespawnMarkerIN.getMarkerID(), addRespawnMarkerIN.getTitle(), addRespawnMarkerIN.getDescription(), addRespawnMarkerIN.getCreator(), addRespawnMarkerIN.isOwn());
         } else if (packet instanceof AddHQMarkerIN) {
             Log.i("Pins", "AddHQMarkerIN");
             AddHQMarkerIN addHQMarkerIN = (AddHQMarkerIN) packet;
@@ -117,7 +116,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
         } else if (packet instanceof AddFlagMarkerIN) {
             Log.i("Pins", "AddFlagMarkerIN");
             AddFlagMarkerIN addFlagMarkerIN = (AddFlagMarkerIN) packet;
-            MainActivity.getMapFragment().addFlagMarker(addFlagMarkerIN.getLatitude(), addFlagMarkerIN.getLongitude(), addFlagMarkerIN.getMarkerID(), addFlagMarkerIN.getTitle(),addFlagMarkerIN.getDescription(), addFlagMarkerIN.getCreator(), addFlagMarkerIN.isOwn());
+            MainActivity.getMapFragment().addFlagMarker(addFlagMarkerIN.getLatitude(), addFlagMarkerIN.getLongitude(), addFlagMarkerIN.getMarkerID(), addFlagMarkerIN.getTitle(), addFlagMarkerIN.getDescription(), addFlagMarkerIN.getCreator(), addFlagMarkerIN.isOwn());
         }
     }
 

@@ -1,11 +1,11 @@
 package netty.packet;
 import android.util.Log;
 
-import netty.packet.in.AddFlagMarkerIN;
-import netty.packet.in.AddHQMarkerIN;
-import netty.packet.in.AddMissionMarkerIN;
-import netty.packet.in.AddRespawnMarkerIN;
-import netty.packet.in.AddTacticalMarkerIN;
+import netty.packet.in.AddMarker.AddFlagMarkerIN;
+import netty.packet.in.AddMarker.AddHQMarkerIN;
+import netty.packet.in.AddMarker.AddMissionMarkerIN;
+import netty.packet.in.AddMarker.AddRespawnMarkerIN;
+import netty.packet.in.AddMarker.AddTacticalMarkerIN;
 import netty.packet.in.ClientAllPositionsIN;
 import netty.packet.in.LoginResponsePacketIN;
 import netty.packet.in.OrgaAuthIN;

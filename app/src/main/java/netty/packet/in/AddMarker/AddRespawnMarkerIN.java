@@ -1,4 +1,4 @@
-package netty.packet.in;
+package netty.packet.in.AddMarker;
 
 import com.google.gson.JsonObject;
 

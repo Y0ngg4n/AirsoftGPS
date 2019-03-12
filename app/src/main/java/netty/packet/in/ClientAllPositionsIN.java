@@ -1,21 +1,20 @@
 package netty.packet.in;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import netty.packet.PacketIN;
 
 public class ClientAllPositionsIN implements PacketIN {
 
-    private JsonArray jsonArray;
+    private JsonObject jsonObject;
 
-    public JsonArray getJsonArray() {
-        return jsonArray;
+    public JsonObject getJsonObject() {
+        return jsonObject;
     }
 
     @Override
     public void read(JsonObject jsonObject) {
-        this.jsonArray = jsonObject.get("positions").getAsJsonArray();
+        this.jsonObject = jsonObject;
     }
 
     @Override

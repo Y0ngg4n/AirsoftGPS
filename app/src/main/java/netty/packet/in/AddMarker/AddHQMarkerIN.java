@@ -1,10 +1,10 @@
-package netty.packet.in;
+package netty.packet.in.AddMarker;
 
 import com.google.gson.JsonObject;
 
 import netty.packet.PacketIN;
 
-public class AddFlagMarkerIN implements PacketIN {
+public class AddHQMarkerIN implements PacketIN {
 
     private double latitude, longitude;
 
@@ -26,7 +26,7 @@ public class AddFlagMarkerIN implements PacketIN {
 
     @Override
     public int getId() {
-        return 11;
+        return 10;
     }
 
     public double getLatitude() {

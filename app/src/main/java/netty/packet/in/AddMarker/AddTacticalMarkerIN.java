@@ -1,35 +1,43 @@
-package netty.packet.in;
+package netty.packet.in.AddMarker;
 
 import com.google.gson.JsonObject;
 
 import netty.packet.PacketIN;
 
-public class AddMissionMarkerIN implements PacketIN {
+public class AddTacticalMarkerIN implements PacketIN {
+
+    private int markerID;
 
     private double latitude, longitude;
 
-    private String title, description, creator;
+    private String teamname, title, description, creator;
 
-    private int markerID;
     @Override
     public void read(JsonObject jsonObject) {
+        markerID = jsonObject.get("markerID").getAsInt();
         latitude = jsonObject.get("latitude").getAsDouble();
         longitude = jsonObject.get("longitude").getAsDouble();
+        teamname = jsonObject.get("teamname").getAsString();
         title = jsonObject.get("title").getAsString();
         description = jsonObject.get("description").getAsString();
         creator = jsonObject.get("creator").getAsString();
-        markerID = jsonObject.get("markerID").getAsInt();
     }
 
     @Override
     public int getId() {
-        return 8;
+        return 7;
     }
 
-    public double getLatitude() { return latitude; }
+    public double getLatitude() {
+        return latitude;
+    }
 
     public double getLongitude() {
         return longitude;
+    }
+
+    public String getTeamname() {
+        return teamname;
     }
 
     public String getTitle() {

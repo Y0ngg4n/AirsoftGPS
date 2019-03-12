@@ -1,16 +1,14 @@
-package netty.packet.in;
+package netty.packet.in.AddMarker;
 
 import com.google.gson.JsonObject;
 
 import netty.packet.PacketIN;
 
-public class AddHQMarkerIN implements PacketIN {
+public class AddMissionMarkerIN implements PacketIN {
 
     private double latitude, longitude;
 
     private String title, description, creator;
-
-    private boolean own;
 
     private int markerID;
     @Override
@@ -20,18 +18,15 @@ public class AddHQMarkerIN implements PacketIN {
         title = jsonObject.get("title").getAsString();
         description = jsonObject.get("description").getAsString();
         creator = jsonObject.get("creator").getAsString();
-        own = jsonObject.get("own").getAsBoolean();
         markerID = jsonObject.get("markerID").getAsInt();
     }
 
     @Override
     public int getId() {
-        return 10;
+        return 8;
     }
 
-    public double getLatitude() {
-        return latitude;
-    }
+    public double getLatitude() { return latitude; }
 
     public double getLongitude() {
         return longitude;
@@ -51,9 +46,5 @@ public class AddHQMarkerIN implements PacketIN {
 
     public int getMarkerID() {
         return markerID;
-    }
-
-    public boolean isOwn() {
-        return own;
     }
 }
