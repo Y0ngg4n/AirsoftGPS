@@ -25,6 +25,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -175,6 +176,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         googleMap.setMyLocationEnabled(true);
         googleMap.getUiSettings().setCompassEnabled(true);
+        googleMap.setOnMapClickListener(latLng -> {
+            MainActivity.removeMarkerFloatingButton.hide();
+            MainActivity.swapFlagMarkerFloatingButton.hide();
+        });
         googleMap.setOnMarkerClickListener(marker -> {
             Log.i("Marker", "Marker: " + marker);
             if (marker.equals(ownMarker)) {
@@ -243,6 +248,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     MainActivity.swapFlagMarkerFloatingButton.setOnClickListener(v -> {
                         Log.i("Flag Marker", "Swap Flag Marker" + marker);
                         NettyClient.sendUpdateFlagMarkerPackageOUT(flagmarkerData.get(marker).getMarkerID(), !flagmarkerData.get(marker).isOwn());
+                        marker.remove();
+                        flagmarkerData.remove(marker);
+                        MainActivity.swapFlagMarkerFloatingButton.hide();
                     });
                     MainActivity.removeMarkerFloatingButton.setOnClickListener(v -> {
                         Log.i("Flag Marker", "Remove Flag Marker " + marker);
@@ -252,6 +260,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                         MainActivity.removeMarkerFloatingButton.hide();
                     });
                     MainActivity.removeMarkerFloatingButton.show();
+                    MainActivity.swapFlagMarkerFloatingButton.show();
                 }
             }
             marker.showInfoWindow();

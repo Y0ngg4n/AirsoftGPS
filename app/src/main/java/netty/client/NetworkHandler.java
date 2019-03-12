@@ -26,7 +26,6 @@ public class NetworkHandler extends SimpleChannelInboundHandler<PacketIN> {
 
     public static boolean loggedIN = false;
 
-
     @SuppressLint("MissingPermission")
     @Override
     protected void channelRead0(final ChannelHandlerContext channelHandlerContext, final PacketIN packet) {
